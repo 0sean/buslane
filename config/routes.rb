@@ -11,7 +11,10 @@ Rails.application.routes.draw do
         collection do
           get "by_noc/:noc", action: :by_noc, as: :by_noc
         end
+        resources :routes, only: [ :index ]
       end
+      resources :routes, only: [ :index, :show ]
+      resources :services, only: [ :show ]
     end
   end
 end
