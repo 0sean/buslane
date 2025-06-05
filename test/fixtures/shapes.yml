@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  id: MyString
+  pt_lat: MyString
+  pt_lon: MyString
+  pt_sequence: 1
+  dist_traveled: 9.99
+
+two:
+  id: MyString
+  pt_lat: MyString
+  pt_lon: MyString
+  pt_sequence: 1
+  dist_traveled: 9.99
