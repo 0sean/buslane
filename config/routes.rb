@@ -6,6 +6,12 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   scope :api, module: nil do
-    # Routes here
+    namespace :timetables do
+      resources :agencies, only: [ :index, :show ] do
+        collection do
+          get "by_noc/:noc", action: :by_noc, as: :by_noc
+        end
+      end
+    end
   end
 end
