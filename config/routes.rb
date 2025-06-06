@@ -22,6 +22,9 @@ Rails.application.routes.draw do
       end
       resources :services, only: [ :show ]
       resources :trips, only: [ :show ]
+      resources :stops, only: [ :index ] do
+        resources :stop_times, only: [ :index ]
+      end
     end
   end
 end
