@@ -17,8 +17,11 @@ Rails.application.routes.draw do
         end
         resources :routes, only: [ :index ]
       end
-      resources :routes, only: [ :index, :show ]
+      resources :routes, only: [ :index, :show ] do
+        resources :trips, only: [ :index ]
+      end
       resources :services, only: [ :show ]
+      resources :trips, only: [ :show ]
     end
   end
 end
