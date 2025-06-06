@@ -1,3 +1,12 @@
+GIT
+  remote: https://github.com/0sean/oas_rails
+  revision: 08dcb814b94e6c38ca889e5a073a102ef5ab8c8e
+  specs:
+    oas_rails (0.15.0)
+      easy_talk_two (~> 1.1.2)
+      method_source (~> 1.0)
+      yard (~> 0.9)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -168,10 +177,6 @@ GEM
       racc (~> 1.4)
     nokogiri (1.18.8-x86_64-linux-musl)
       racc (~> 1.4)
-    oas_rails (0.15.0)
-      easy_talk_two (~> 1.1.2)
-      method_source (~> 1.0)
-      yard (~> 0.9)
     ostruct (0.6.1)
     parallel (1.27.0)
     parser (3.3.8.0)
@@ -329,7 +334,7 @@ DEPENDENCIES
   byebug (~> 12.0)
   debug
   kamal
-  oas_rails
+  oas_rails!
   puma (>= 5.0)
   rails (~> 8.0.2)
   rubocop-rails-omakase

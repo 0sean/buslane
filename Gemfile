@@ -48,4 +48,4 @@ end
 
 gem "byebug", "~> 12.0", groups: [ :development, :test ]
 
-gem "oas_rails", groups: [ :development ]
+gem "oas_rails", git: "https://github.com/0sean/oas_rails", groups: [ :development ]

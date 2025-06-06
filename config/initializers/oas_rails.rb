@@ -75,4 +75,26 @@ OasRails.configure do |config|
   config.possible_default_responses = [ :not_found, :unauthorized ]
   config.response_body_of_not_found= "Hash{ success: false, error: String }"
   config.response_body_of_unauthorized = "Hash{ success: false, error: String }"
+
+  # Per-route documentation overrides (summary, parameters, etc)
+  # Example:
+  # config.route_overrides = {
+  #   "/users/:user_id/projects" => {
+  #     summary: "List projects for a user",
+  #     parameters: [
+  #       { name: "user_id", in: "path", type: "integer", required: true, description: "ID of the user" }
+  #     ]
+  #   }
+  # }
+  # config.route_overrides = {}
+  #
+
+  config.route_overrides = {
+    "/api/timetables/agencies/{agency_id}/routes" => {
+      summary: "List Routes by Agency",
+      parameters: [
+        { name: "agency_id", in: "path", type: "string", required: true, description: "The ID of the agency to find routes by" }
+      ]
+    }
+  }
 end

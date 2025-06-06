@@ -33,3 +33,4 @@
 
 .kamal/secrets
 config/deploy.yml
+.byebug_history

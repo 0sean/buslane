@@ -1,7 +1,6 @@
 # @tags Timetables > Routes
 class Timetables::RoutesController < ApplicationController
   # @summary List Routes
-  # @parameter agency_id(query) [string] The ID of the agency to filter routes by (optional)
   # @response Success(200) [array<Route>]
   def index
     if params[:agency_id].present?
