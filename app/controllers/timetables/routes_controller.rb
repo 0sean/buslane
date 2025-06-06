@@ -12,7 +12,7 @@ class Timetables::RoutesController < ApplicationController
   end
 
   # @summary Get Route by ID
-  # @param id [Integer] The ID of the route to retrieve
+  # @parameter id(path) [!Integer] The ID of the route to retrieve
   # @response Success(200) [Route]
   def show
     @route = Route.find_by(id: params[:id])

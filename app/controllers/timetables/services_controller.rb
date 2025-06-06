@@ -1,7 +1,7 @@
 # @tags Timetables > Services
 class Timetables::ServicesController < ApplicationController
   # @summary Get Service by ID
-  # @param id [Integer] The ID of the service to retrieve
+  # @parameter id(path) [!Integer] The ID of the service to retrieve
   # @response Success(200) [Service]
   def show
     @service = Service.includes(:calendar_dates).find_by(id: params[:id])
