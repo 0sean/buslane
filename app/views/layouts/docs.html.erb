@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= OasRails.config.info.title %></title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <meta charset="utf-8">
+    <!-- Important: rapi-doc uses utf8 characters -->
+  </head>
+  <body>
+    <%= yield %>
+    <script>
+        const rd = document.querySelector('rapi-doc');
+        rd.addEventListener("spec-loaded", function() {
+            const style = document.createElement('style');
+            style.innerHTML = "#link-overview, #overview { display: none; }";
+            rd.shadowRoot.appendChild(style);
+
+            // const alternativeNames = {
+            //     "get-/api/timetables/agencies/-agency_id-/routes": "List Routes by Agency"
+            // }
+
+            // Object.entries(alternativeNames).forEach(([contentId, name]) => {
+            //     const link = rd.shadowRoot.querySelector(`.nav-bar-path[data-content-id="${contentId}"] > span`),
+            //       nodes = Array.from(link.childNodes);
+            //     nodes[nodes.length - 2].nodeValue = name;
+            // });
+
+            // setInterval(() => {
+            //   const endpointBody = rd.shadowRoot.querySelector('.expanded-endpoint-body');
+            //   if(endpointBody) {
+            //     const activeItem = rd.shadowRoot.querySelector('.nav-bar-path.active'),
+            //       contentId = activeItem.dataset.contentId,
+            //       nodes = Array.from(activeItem.querySelector('span').childNodes),
+            //       navName = nodes[nodes.length - 2].nodeValue,
+            //       heading = endpointBody.querySelector('h2[part="section-operation-summary"]'),
+            //       headingNodes = Array.from(heading.childNodes),
+            //       headingName = headingNodes[headingNodes.length - 1].nodeValue;
+
+            //     if(navName !== headingName) {
+            //       headingNodes[headingNodes.length - 1].nodeValue = navName;
+            //     }
+            //   }
+            // }, 100);
+        });
+    </script>
+  </body>
+</html>

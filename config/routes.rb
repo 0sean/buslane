@@ -5,6 +5,10 @@ Rails.application.routes.draw do
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
 
+  if Rails.env.development?
+    mount OasRails::Engine => "/docs"
+  end
+
   scope :api, module: nil do
     namespace :timetables do
       resources :agencies, only: [ :index, :show ] do
