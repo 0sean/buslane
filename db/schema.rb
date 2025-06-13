@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_04_214603) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_09_222119) do
   create_table "agencies", id: :string, force: :cascade do |t|
     t.string "name", null: false
     t.string "url"
@@ -101,7 +101,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_04_214603) do
   end
 
   create_table "stops", id: :string, force: :cascade do |t|
-    t.string "code", null: false
+    t.string "code"
     t.string "name", null: false
     t.decimal "lat", null: false
     t.decimal "lon", null: false
@@ -110,14 +110,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_04_214603) do
     t.string "platform_code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "parent_station_id", null: false
+    t.string "parent_station_id"
     t.index ["parent_station_id"], name: "index_stops_on_parent_station_id"
   end
 
   create_table "trips", id: :string, force: :cascade do |t|
     t.integer "route_id", null: false
     t.integer "service_id", null: false
-    t.string "trip_headsign", default: ""
+    t.string "headsign", default: ""
     t.integer "direction_id", null: false
     t.string "block_id", null: false
     t.boolean "wheelchair_accessible", default: false

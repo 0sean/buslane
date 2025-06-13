@@ -34,3 +34,4 @@
 .kamal/secrets
 config/deploy.yml
 .byebug_history
+config/credentials.yml.enc
