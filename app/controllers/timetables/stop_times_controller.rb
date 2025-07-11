@@ -1,8 +1,4 @@
-# @tags Timetables > Stop Times
 class Timetables::StopTimesController < ApplicationController
-  # @summary List Stop Times for a Stop
-  # @parameter stop_id(path) [!String] The ID of the stop to retrieve stop times for
-  # @response Success(200) [array<StopTime>]
   def index
     @stop = Stop.find_by(id: params[:stop_id])
     if @stop.nil?

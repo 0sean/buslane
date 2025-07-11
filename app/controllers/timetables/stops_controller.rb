@@ -1,7 +1,4 @@
-# @tags Timetables > Stops
 class Timetables::StopsController < ApplicationController
-  # @summary List Stops
-  # @response Success(200) [array<Stop>]
   def index
     if params[:agency_id].present?
       @agency = Agency.by_id_or_noc(params[:agency_id])

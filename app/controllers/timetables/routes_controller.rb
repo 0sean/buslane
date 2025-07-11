@@ -1,7 +1,4 @@
-# @tags Timetables > Routes
 class Timetables::RoutesController < ApplicationController
-  # @summary List Routes
-  # @response Success(200) [array<Route>]
   def index
     if params[:agency_id].present?
       @agency = Agency.by_id_or_noc(params[:agency_id])
@@ -14,9 +11,6 @@ class Timetables::RoutesController < ApplicationController
     )
   end
 
-  # @summary Get Route by ID
-  # @parameter id(path) [!Integer] The ID of the route to retrieve
-  # @response Success(200) [Route]
   def show
     @route = Route.includes(:trips).find_by(id: params[:id])
     if @route.nil?

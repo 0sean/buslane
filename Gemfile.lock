@@ -1,12 +1,3 @@
-GIT
-  remote: https://github.com/0sean/oas_rails
-  revision: 08dcb814b94e6c38ca889e5a073a102ef5ab8c8e
-  specs:
-    oas_rails (0.15.0)
-      easy_talk_two (~> 1.1.2)
-      method_source (~> 1.0)
-      yard (~> 0.9)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -102,10 +93,6 @@ GEM
       reline (>= 0.3.8)
     dotenv (3.1.8)
     drb (2.2.3)
-    easy_talk_two (1.1.2)
-      activemodel (>= 7.0)
-      activesupport (>= 7.0)
-      sorbet-runtime (>= 0.5)
     ed25519 (1.4.0)
     erb (5.0.1)
     erubi (1.13.1)
@@ -151,7 +138,6 @@ GEM
       net-pop
       net-smtp
     marcel (1.0.4)
-    method_source (1.1.0)
     mini_mime (1.1.5)
     minitest (5.25.5)
     msgpack (1.8.0)
@@ -292,7 +278,6 @@ GEM
       fugit (~> 1.11.0)
       railties (>= 7.1)
       thor (~> 1.3.1)
-    sorbet-runtime (0.5.12155)
     sqlite3 (2.6.0-aarch64-linux-gnu)
     sqlite3 (2.6.0-aarch64-linux-musl)
     sqlite3 (2.6.0-arm-linux-gnu)
@@ -323,7 +308,6 @@ GEM
       base64
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
-    yard (0.9.37)
     zeitwerk (2.7.3)
 
 PLATFORMS
@@ -343,7 +327,6 @@ DEPENDENCIES
   debug
   httparty
   kamal
-  oas_rails!
   puma (>= 5.0)
   rails (~> 8.0.2)
   rubocop-rails-omakase

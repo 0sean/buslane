@@ -48,8 +48,6 @@ end
 
 gem "byebug", "~> 12.0"
 
-gem "oas_rails", git: "https://github.com/0sean/oas_rails", groups: [ :development ]
-
 gem "ruby-progressbar"
 gem "httparty"
 gem "rubyzip"
