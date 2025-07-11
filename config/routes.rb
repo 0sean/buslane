@@ -8,13 +8,10 @@ Rails.application.routes.draw do
   scope :api, module: nil do
     namespace :timetables do
       resources :agencies, only: [ :index, :show ] do
-        collection do
-          get "by_noc/:noc", action: :by_noc, as: :by_noc
-        end
         resources :routes, only: [ :index ]
         resources :stops, only: [ :index ]
       end
-      resources :routes, only: [ :index, :show ] do
+      resources :routes, only: [ :show ] do
         resources :trips, only: [ :index ]
       end
       resources :services, only: [ :show ]
