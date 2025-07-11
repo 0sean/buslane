@@ -8,4 +8,6 @@ class Trip < ApplicationRecord
   belongs_to :shape, optional: true
   has_many :frequencies, dependent: :destroy
   has_many :stop_times, dependent: :destroy
+
+  has_many :stops, through: :stop_times
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_09_222119) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_06_172442) do
   create_table "agencies", id: :string, force: :cascade do |t|
     t.string "name", null: false
     t.string "url"
@@ -20,6 +20,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_222119) do
     t.string "noc", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["noc"], name: "index_agencies_on_noc"
   end
 
   create_table "api_keys", force: :cascade do |t|
@@ -57,6 +58,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_222119) do
     t.integer "route_type", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["agency_id", "id"], name: "index_routes_on_agency_id_and_id"
     t.index ["agency_id"], name: "index_routes_on_agency_id"
   end
 
@@ -125,6 +127,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_222119) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "shape_id"
+    t.index ["route_id", "id"], name: "index_trips_on_route_id_and_id"
     t.index ["route_id"], name: "index_trips_on_route_id"
     t.index ["service_id"], name: "index_trips_on_service_id"
     t.index ["shape_id"], name: "index_trips_on_shape_id"

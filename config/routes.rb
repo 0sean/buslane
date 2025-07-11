@@ -16,6 +16,7 @@ Rails.application.routes.draw do
           get "by_noc/:noc", action: :by_noc, as: :by_noc
         end
         resources :routes, only: [ :index ]
+        resources :stops, only: [ :index ]
       end
       resources :routes, only: [ :index, :show ] do
         resources :trips, only: [ :index ]

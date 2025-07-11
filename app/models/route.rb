@@ -87,4 +87,6 @@ class Route < ApplicationRecord
 
   belongs_to :agency
   has_many :trips, dependent: :destroy
+
+  has_many :stops, through: :trips
 end

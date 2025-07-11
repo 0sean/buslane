@@ -46,7 +46,7 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 end
 
-gem "byebug", "~> 12.0", groups: [ :development, :test ]
+gem "byebug", "~> 12.0"
 
 gem "oas_rails", git: "https://github.com/0sean/oas_rails", groups: [ :development ]
 

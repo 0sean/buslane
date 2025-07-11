@@ -15,7 +15,8 @@ class Timetables::StopTimesController < ApplicationController
             include: {
               route: {
                 include: :agency
-              }
+              },
+              service: {}
             }
           }
         }
