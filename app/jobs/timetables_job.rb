@@ -48,6 +48,11 @@ class TimetablesJob < ApplicationJob
         Stop.delete_all
         Service.delete_all
         Shape.delete_all
+        CalendarDate.delete_all
+        Route.delete_all
+        Trip.delete_all
+        Frequency.delete_all
+        StopTime.delete_all
 
         zip.each do |file|
           file_name = file.name.split(".").first
