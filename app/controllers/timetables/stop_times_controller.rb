@@ -4,7 +4,7 @@ class Timetables::StopTimesController < ApplicationController
     if @stop.nil?
       render json: { success: false, error: "Stop not found" }, status: :not_found
     else
-      @stop_times = @stop.stop_times.includes([ :service, trip: { route: :agency } ])
+      @stop_times = @stop.stop_times.includes(trip: [:service, { route: :agency }])
       render json: @stop_times.as_json(
         include: {
           trip: {
