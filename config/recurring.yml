@@ -1,4 +1,0 @@
-production:
-  timetables_job:
-    class: TimetablesJob
-    schedule: every day at 1am
