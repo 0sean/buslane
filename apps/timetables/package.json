@@ -1,5 +1,8 @@
 {
   "name": "timetables",
-  "type": "module",
-  "private": true
+  "private": true,
+  "scripts": {
+    "db:reset": "psql postgres://postgres:123456@localhost:5432/buslane_timetables -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public;' && psql postgres://postgres:123456@localhost:5432/buslane_timetables -f schema.sql"
+  },
+  "type": "module"
 }

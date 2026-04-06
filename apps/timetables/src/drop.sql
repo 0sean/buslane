@@ -1,0 +1,9 @@
+DROP TABLE old_stop_times;
+DROP TABLE old_frequencies;
+DROP TABLE old_trips;
+DROP TABLE old_shapes;
+DROP TABLE old_stops;
+DROP TABLE old_routes;
+DROP TABLE old_calendar_dates;
+DROP TABLE old_services;
+DROP TABLE old_agencies;
