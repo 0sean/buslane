@@ -32,6 +32,7 @@ static TRANSFORMS: &[(&str, &str)] = &[
     ("stop_times", include_str!("transforms/stop_times.sql")),
 ];
 
+static STAGING_SCHEMA: &str = include_str!("schemas/staging.sql");
 static INDEXES: &str = include_str!("indexes.sql");
 static SWAP: &str = include_str!("swap.sql");
 static DROP: &str = include_str!("drop.sql");
@@ -65,8 +66,11 @@ fn main() {
     println!("Swapping tables");
     client.simple_query(SWAP).expect("Failed to swap tables");
 
-    println!("Dropping tables");
-    client.simple_query(DROP).expect("Failed to swap tables");
+    println!("Dropping and truncating tables");
+    client.simple_query(DROP).expect("Failed to drop tables");
+
+    println!("Reimporting staging schema");
+    client.simple_query(STAGING_SCHEMA).expect("Failed to reimport staging schema");
 
     release_advisory_lock(client);
 }
