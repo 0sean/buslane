@@ -2,7 +2,7 @@
   "name": "timetables",
   "private": true,
   "scripts": {
-    "db:reset": "psql postgres://postgres:123456@localhost:5432/buslane_timetables -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public;' && psql postgres://postgres:123456@localhost:5432/buslane_timetables -f src/schemas/main.sql && psql postgres://postgres:123456@localhost:5432/buslane_timetables -f src/schemas/staging.sql"
+    "db:reset": "psql postgres://postgres:rPD87pApCzZobYwrWAuDBqmrKqBi7jFx!@34.62.245.12:5432/buslane_timetables -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public;' && psql postgres://postgres:rPD87pApCzZobYwrWAuDBqmrKqBi7jFx!@34.62.245.12:5432/buslane_timetables -f src/schemas/main.sql && psql postgres://postgres:rPD87pApCzZobYwrWAuDBqmrKqBi7jFx!@34.62.245.12:5432/buslane_timetables -f src/schemas/staging.sql"
   },
   "type": "module"
 }

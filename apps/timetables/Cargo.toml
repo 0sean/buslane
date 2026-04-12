@@ -5,6 +5,8 @@ edition = "2024"
 
 [dependencies]
 postgres = "0.19"
+postgres-native-tls = "0.5"
+native-tls = "0.2"
 dotenvy = "0.15.7"
 chrono = { version = "0.4", default-features = false, features = ["std", "clock"] }
 bigdecimal = "0.4"

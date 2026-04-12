@@ -1,12 +1,19 @@
 use chrono::Local;
 use dotenvy::dotenv;
-use postgres::{Client, NoTls};
+use native_tls::TlsConnector;
+use postgres::Client;
+use postgres_native_tls::MakeTlsConnector;
 use std::env;
 
 pub fn connect() -> Client {
     dotenv().ok();
     let url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    Client::connect(&url, NoTls)
+    let connector = TlsConnector::builder()
+        .danger_accept_invalid_certs(true)
+        .build()
+        .expect("Failed to build TLS connector");
+    let tls = MakeTlsConnector::new(connector);
+    Client::connect(&url, tls)
         .unwrap_or_else(|_| panic!("Error connecting to database ({})", url))
 }
 
