@@ -13,6 +13,7 @@ export default (nitroApp: any) => {
   });
 
   nitroApp.hooks.hook('error', async (error: any) => {
+    console.error(error);
     Sentry.captureException(error);
     await Sentry.flush(2000);
   });
