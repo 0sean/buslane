@@ -7,7 +7,9 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev"
+    "dev": "turbo run dev",
+    "deploy": "turbo run build && terraform -chdir=terraform apply",
+    "deploy:setup": "terraform -chdir=terraform init && terraform -chdir=terraform apply -target=google_artifact_registry_repository.buslane && gcloud auth configure-docker europe-west1-docker.pkg.dev"
   },
   "workspaces": [
     "apps/*",

@@ -2,10 +2,15 @@
 
 set -euo pipefail
 
+rm -rf /tmp/timetables
+
 mkdir /tmp/timetables
 cd /tmp/timetables
 
 wget -O data.zip https://data.bus-data.dft.gov.uk/timetable/download/gtfs-file/all/
-unzip data.zip
+mkdir data
+unzip -d data data.zip
 
 exec /usr/local/bin/timetables /tmp/timetables/data
+
+rm -rf /tmp/timetables
