@@ -7,8 +7,11 @@ export default (nitroApp: any) => {
     if (initialized) return;
     const dsn = (globalThis as any).__env__?.SENTRY_DSN ?? process.env.SENTRY_DSN;
     if (dsn) {
-      Sentry.init({ dsn, tracesSampleRate: 1.0 });
-      initialized = true;
+      const init = (Sentry as Record<string, unknown>)["init"];
+      if (typeof init === "function") {
+        init({ dsn, tracesSampleRate: 1.0 });
+        initialized = true;
+      }
     }
   });
 
