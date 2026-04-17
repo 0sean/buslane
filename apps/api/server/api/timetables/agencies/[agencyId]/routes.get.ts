@@ -1,13 +1,15 @@
 import { defineHandler } from "nitro";
 import { getRouterParam, HTTPError } from "h3";
 import { eq } from "drizzle-orm";
-import { db, schema } from "~/db/timetables";
+import { schema } from "~/db/timetables";
 import { findAgencyByIdOrNoc } from "#utils/agencies.ts";
+import { useDb } from "#utils/db.ts";
 import { serialize } from "#utils/serialize.ts";
 
 export default defineHandler(async (event) => {
+  const db = useDb(event);
   const agencyId = getRouterParam(event, "agencyId")!;
-  const agency = await findAgencyByIdOrNoc(agencyId);
+  const agency = await findAgencyByIdOrNoc(db, agencyId);
   if (!agency) {
     throw new HTTPError({ status: 404, body: { success: false, error: "Agency not found" } });
   }

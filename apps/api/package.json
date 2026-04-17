@@ -10,6 +10,7 @@
     "#*": "./*"
   },
   "devDependencies": {
+    "@types/pg": "^8.20.0",
     "jiti": "^2.6.1",
     "nitro": "latest",
     "typescript": "^6.0.2"
@@ -19,6 +20,6 @@
     "dotenv": "^17.4.1",
     "drizzle-orm": "^0.45.2",
     "h3": "^2.0.1-rc.20",
-    "postgres": "^3.4.9"
+    "pg": "^8.20.0"
   }
 }
