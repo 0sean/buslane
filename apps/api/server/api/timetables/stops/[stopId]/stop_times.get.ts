@@ -2,7 +2,7 @@ import { defineHandler } from "nitro";
 import { getRouterParam, HTTPError } from "h3";
 import { eq } from "drizzle-orm";
 import { db, schema } from "~/db/timetables";
-import { serialize } from "~/server/utils/serialize";
+import { serialize } from "#utils/serialize.ts";
 
 export default defineHandler(async (event) => {
   const stopId = getRouterParam(event, "stopId")!;

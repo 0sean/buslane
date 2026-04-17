@@ -1,7 +1,7 @@
 import { defineHandler } from "nitro";
 import { getRouterParam, HTTPError } from "h3";
-import { findAgencyByIdOrNoc } from "~/server/utils/agencies";
-import { serialize } from "~/server/utils/serialize";
+import { findAgencyByIdOrNoc } from "#utils/agencies.ts";
+import { serialize } from "#utils/serialize.ts";
 
 export default defineHandler(async (event) => {
   const id = getRouterParam(event, "id")!;
