@@ -2,7 +2,7 @@
   "name": "timetables",
   "private": true,
   "scripts": {
-    "db:reset": "psql postgres://postgres:rPD87pApCzZobYwrWAuDBqmrKqBi7jFx!@34.62.245.12:5432/buslane_timetables -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public;' && psql postgres://postgres:rPD87pApCzZobYwrWAuDBqmrKqBi7jFx!@34.62.245.12:5432/buslane_timetables -f src/schemas/main.sql && psql postgres://postgres:rPD87pApCzZobYwrWAuDBqmrKqBi7jFx!@34.62.245.12:5432/buslane_timetables -f src/schemas/staging.sql",
+    "db:reset": "export $(grep -v '^#' .env | xargs) && psql $DATABASE_URL -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public;' && psql $DATABASE_URL -f src/schemas/main.sql && psql $DATABASE_URL -f src/schemas/staging.sql",
     "build": "REGISTRY=$(terraform -chdir=../../terraform output -raw artifact_registry_repo) && docker build -t $REGISTRY/timetables:latest . && docker push $REGISTRY/timetables:latest"
   },
   "type": "module"
