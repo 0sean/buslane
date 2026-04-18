@@ -31,6 +31,10 @@ resource "cloudflare_worker" "api" {
 
   observability = {
     enabled = true
+    
+    traces = {
+      enabled = true
+    }
   }
 }
 
