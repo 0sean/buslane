@@ -99,7 +99,7 @@ resource "google_cloud_run_v2_job" "timetables" {
 
       # Allow up to 1 hour for a full GTFS import
       timeout     = "3600s"
-      max_retries = 1
+      max_retries = 0
     }
   }
 

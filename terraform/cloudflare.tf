@@ -19,6 +19,10 @@ resource "cloudflare_hyperdrive_config" "timetables_db" {
     user     = local.db.user
     password = local.db.password
   }
+  
+  caching = {
+    disabled = false
+  }
 }
 
 resource "cloudflare_worker" "api" {
@@ -84,6 +88,7 @@ resource "cloudflare_workers_custom_domain" "api" {
   hostname   = "lane2.transit.fyi"
   service    = cloudflare_worker.api.name
   zone_id    = var.cloudflare_zone_id
+  environment = "production"
 
   depends_on = [cloudflare_workers_deployment.api]
 }
