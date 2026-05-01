@@ -76,6 +76,11 @@ resource "google_cloud_run_v2_job" "timetables" {
           value = var.database_url
         }
 
+        env {
+          name  = "AUTH_KEY"
+          value = var.api_key
+        }
+
         resources {
           limits = {
             cpu    = "1"

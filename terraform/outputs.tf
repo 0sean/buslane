@@ -1,6 +1,6 @@
 output "api_url" {
   description = "API base URL"
-  value       = "https://lane2.transit.fyi"
+  value       = "https://lane.transit.fyi"
 }
 
 output "worker_name" {

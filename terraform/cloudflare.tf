@@ -25,6 +25,11 @@ resource "cloudflare_hyperdrive_config" "timetables_db" {
   }
 }
 
+resource "cloudflare_workers_kv_namespace" "timetables_cache" {
+  account_id = var.cloudflare_account_id
+  title      = "buslane-timetables-cache"
+}
+
 resource "cloudflare_worker" "api" {
   account_id = var.cloudflare_account_id
   name       = "buslane-api"
@@ -70,6 +75,11 @@ resource "cloudflare_worker_version" "api" {
       type = "plain_text"
       name = "SENTRY_DSN"
       text = var.sentry_dsn
+    },
+    {
+      type         = "kv_namespace"
+      name         = "TIMETABLES_CACHE"
+      namespace_id = cloudflare_workers_kv_namespace.timetables_cache.id
     }
   ]
 }
@@ -89,7 +99,7 @@ resource "cloudflare_workers_deployment" "api" {
 
 resource "cloudflare_workers_custom_domain" "api" {
   account_id = var.cloudflare_account_id
-  hostname   = "lane2.transit.fyi"
+  hostname   = "lane.transit.fyi"
   service    = cloudflare_worker.api.name
   zone_id    = var.cloudflare_zone_id
   environment = "production"

@@ -14,3 +14,6 @@ unzip -d data data.zip
 exec /usr/local/bin/timetables /tmp/timetables/data
 
 rm -rf /tmp/timetables
+
+echo "Invalidating KV cache"
+wget -q -O - --method=POST --header="Authorization: Bearer $AUTH_KEY" https://lane.transit.fyi/api/invalidate

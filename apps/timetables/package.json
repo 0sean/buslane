@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "db:reset": "export $(grep -v '^#' .env | xargs) && psql $DATABASE_URL -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public;' && psql $DATABASE_URL -f src/schemas/main.sql && psql $DATABASE_URL -f src/schemas/staging.sql",
+    "db:create": "export $(grep -v '^#' .env | xargs) && psql $DATABASE_URL -c 'CREATE DATABASE timetables'",
     "build": "REGISTRY=$(terraform -chdir=../../terraform output -raw artifact_registry_repo) && docker build -t $REGISTRY/timetables:latest . && docker push $REGISTRY/timetables:latest"
   },
   "type": "module"
