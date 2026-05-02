@@ -18,6 +18,7 @@ RUN apt-get update \
 COPY --from=builder /app/target/release/timetables /usr/local/bin/timetables
 COPY entrypoint.sh /usr/local/bin/entrypoint
 
+RUN chmod +x /usr/local/bin/timetables
 RUN chmod +x /usr/local/bin/entrypoint
 
 ENTRYPOINT ["/usr/local/bin/entrypoint"]

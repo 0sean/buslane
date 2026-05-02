@@ -11,7 +11,7 @@ wget -O data.zip https://data.bus-data.dft.gov.uk/timetable/download/gtfs-file/a
 mkdir data
 unzip -d data data.zip
 
-exec /usr/local/bin/timetables /tmp/timetables/data
+/usr/local/bin/timetables /tmp/timetables/data
 
 rm -rf /tmp/timetables
 
