@@ -11,6 +11,15 @@ terraform {
       version = "~> 6.0"
     }
   }
+
+  cloud {
+    
+    organization = "Transit"
+
+    workspaces {
+      name = "Buslane"
+    }
+  }
 }
 
 provider "cloudflare" {
