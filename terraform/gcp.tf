@@ -45,9 +45,32 @@ resource "google_storage_bucket" "timetables_tmp" {
   depends_on = [google_project_service.storage]
 }
 
+resource "google_storage_bucket" "fares_tmp" {
+  name          = "${var.gcp_project_id}-fares-tmp"
+  location      = var.gcp_region
+  storage_class = "STANDARD"
+  force_destroy = true
+
+  lifecycle_rule {
+    condition {
+      age = 2
+    }
+    action {
+      type = "Delete"
+    }
+  }
+
+  depends_on = [google_project_service.storage]
+}
+
 resource "google_service_account" "timetables" {
   account_id   = "buslane-timetables"
   display_name = "Buslane Timetables Job"
+}
+
+resource "google_service_account" "fares" {
+  account_id   = "buslane-fares"
+  display_name = "Buslane Fares Job"
 }
 
 resource "google_storage_bucket_iam_member" "timetables_tmp" {
@@ -56,8 +79,15 @@ resource "google_storage_bucket_iam_member" "timetables_tmp" {
   member = "serviceAccount:${google_service_account.timetables.email}"
 }
 
+resource "google_storage_bucket_iam_member" "fares_tmp" {
+  bucket = google_storage_bucket.fares_tmp.name
+  role   = "roles/storage.objectAdmin"
+  member = "serviceAccount:${google_service_account.fares.email}"
+}
+
 locals {
   timetables_image = "${var.gcp_region}-docker.pkg.dev/${var.gcp_project_id}/${google_artifact_registry_repository.buslane.repository_id}/timetables:${var.timetables_image_tag}"
+  fares_image      = "${var.gcp_region}-docker.pkg.dev/${var.gcp_project_id}/${google_artifact_registry_repository.buslane.repository_id}/fares:${var.fares_image_tag}"
 }
 
 resource "google_cloud_run_v2_job" "timetables" {
@@ -111,6 +141,72 @@ resource "google_cloud_run_v2_job" "timetables" {
   depends_on = [google_project_service.run]
 }
 
+resource "google_cloud_run_v2_job" "fares" {
+  name     = "buslane-fares"
+  location = var.gcp_region
+
+  template {
+    template {
+      service_account = google_service_account.fares.email
+
+      containers {
+        image = local.fares_image
+
+        env {
+          name  = "DATABASE_URL"
+          value = var.database_url
+        }
+
+        env {
+          name  = "AUTH_KEY"
+          value = var.api_key
+        }
+
+        env {
+          name  = "FARES_INPUT_URL"
+          value = var.fares_input_url
+        }
+
+        env {
+          name  = "FARES_STORE_RAW_XML"
+          value = "false"
+        }
+
+        env {
+          name  = "FARES_STRICT_XSD"
+          value = "false"
+        }
+
+        resources {
+          limits = {
+            cpu    = "8"
+            memory = "16Gi"
+          }
+        }
+
+        volume_mounts {
+          name       = "tmp"
+          mount_path = "/tmp"
+        }
+      }
+
+      volumes {
+        name = "tmp"
+        gcs {
+          bucket    = google_storage_bucket.fares_tmp.name
+          read_only = false
+        }
+      }
+
+      # Allow up to 6 hours for the initial full BODS fares import.
+      timeout     = "21600s"
+      max_retries = 0
+    }
+  }
+
+  depends_on = [google_project_service.run]
+}
+
 resource "google_service_account" "scheduler" {
   account_id   = "buslane-scheduler"
   display_name = "Buslane Cloud Scheduler"
@@ -120,6 +216,14 @@ resource "google_cloud_run_v2_job_iam_member" "scheduler_invoker" {
   project  = var.gcp_project_id
   location = var.gcp_region
   name     = google_cloud_run_v2_job.timetables.name
+  role     = "roles/run.invoker"
+  member   = "serviceAccount:${google_service_account.scheduler.email}"
+}
+
+resource "google_cloud_run_v2_job_iam_member" "fares_scheduler_invoker" {
+  project  = var.gcp_project_id
+  location = var.gcp_region
+  name     = google_cloud_run_v2_job.fares.name
   role     = "roles/run.invoker"
   member   = "serviceAccount:${google_service_account.scheduler.email}"
 }
@@ -135,6 +239,26 @@ resource "google_cloud_scheduler_job" "timetables_daily" {
   http_target {
     http_method = "POST"
     uri         = "https://run.googleapis.com/v2/projects/${var.gcp_project_id}/locations/${var.gcp_region}/jobs/${google_cloud_run_v2_job.timetables.name}:run"
+
+    oauth_token {
+      service_account_email = google_service_account.scheduler.email
+    }
+  }
+
+  depends_on = [google_project_service.cloudscheduler]
+}
+
+resource "google_cloud_scheduler_job" "fares_daily" {
+  name             = "buslane-fares-daily"
+  description      = "Run BODS NeTEx fares import daily at 4am UTC"
+  schedule         = "0 4 * * *"
+  time_zone        = "UTC"
+  attempt_deadline = "1800s"
+  region           = var.gcp_region
+
+  http_target {
+    http_method = "POST"
+    uri         = "https://run.googleapis.com/v2/projects/${var.gcp_project_id}/locations/${var.gcp_region}/jobs/${google_cloud_run_v2_job.fares.name}:run"
 
     oauth_token {
       service_account_email = google_service_account.scheduler.email

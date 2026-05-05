@@ -1,0 +1,9 @@
+{
+  "name": "fares",
+  "private": true,
+  "scripts": {
+    "db:reset": "export $(grep -v '^#' .env | xargs) && psql $DATABASE_URL -f src/schemas/main.sql && psql $DATABASE_URL -f src/schemas/staging.sql",
+    "build": "REGISTRY=$(terraform -chdir=../../terraform output -raw artifact_registry_repo) && docker build -t $REGISTRY/fares:latest . && docker push $REGISTRY/fares:latest"
+  },
+  "type": "module"
+}

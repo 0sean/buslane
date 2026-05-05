@@ -23,6 +23,11 @@ output "timetables_job_name" {
   value       = google_cloud_run_v2_job.timetables.name
 }
 
+output "fares_job_name" {
+  description = "Cloud Run fares job name"
+  value       = google_cloud_run_v2_job.fares.name
+}
+
 output "artifact_registry_repo" {
   description = "Artifact Registry repository URL for pushing images"
   value       = "${var.gcp_region}-docker.pkg.dev/${var.gcp_project_id}/${google_artifact_registry_repository.buslane.repository_id}"
@@ -31,4 +36,9 @@ output "artifact_registry_repo" {
 output "timetables_image" {
   description = "Full image path for the timetables job"
   value       = local.timetables_image
+}
+
+output "fares_image" {
+  description = "Full image path for the fares job"
+  value       = local.fares_image
 }

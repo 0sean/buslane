@@ -48,3 +48,15 @@ variable "timetables_image_tag" {
   type        = string
   default     = "latest"
 }
+
+variable "fares_image_tag" {
+  description = "Docker image tag for the fares job"
+  type        = string
+  default     = "latest"
+}
+
+variable "fares_input_url" {
+  description = "BODS fares bulk archive URL"
+  type        = string
+  default     = "https://data.bus-data.dft.gov.uk/fares/download/bulk_archive"
+}
