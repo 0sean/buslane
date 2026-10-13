@@ -1,0 +1,3 @@
+route_id,agency_id,route_short_name,route_long_name,route_type
+101,A1,1,First Route,700
+102,A2,2,Second Route,700

@@ -1,0 +1,14 @@
+**/node_modules
+**/.output
+**/.nitro
+**/.wrangler
+**/target
+**/.turbo
+.git
+**/.env*
+terraform
+server.crt
+data
+scratch
+**/*.sqlite*
+**/*.zip

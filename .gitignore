@@ -81,3 +81,10 @@ terraform.rc
 # Optional: ignore plan files saved before destroying Terraform configuration
 # Uncomment the line below if you want to ignore planout files.
 # planout
+# Local timetable data and benchmark artifacts
+data/
+scratch/
+*.sqlite
+*.sqlite-*
+*.sqlite.lock
+benchmark-results/
