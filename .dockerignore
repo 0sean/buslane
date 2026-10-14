@@ -7,7 +7,6 @@
 .git
 **/.env*
 terraform
-server.crt
 data
 scratch
 **/*.sqlite*
