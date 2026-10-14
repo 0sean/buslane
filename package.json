@@ -11,7 +11,9 @@
     "test": "cargo build --manifest-path apps/timetables/Cargo.toml --locked && cargo test --manifest-path apps/timetables/Cargo.toml --locked && bun run --cwd apps/api test",
     "check-types": "turbo run check-types",
     "deploy": "docker compose up -d --no-build api",
-    "build:images": "docker compose --profile jobs build"
+    "build:images": "docker compose --profile jobs build",
+    "test:compose": "bash scripts/test-compose.sh",
+    "benchmark": "node scripts/benchmark.mjs"
   },
   "workspaces": [
     "apps/*",
