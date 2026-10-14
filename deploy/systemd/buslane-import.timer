@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily Buslane timetable import at 02:00 UTC
+
+[Timer]
+OnCalendar=*-*-* 02:00:00 UTC
+Persistent=true
+Unit=buslane-import.service
+
+[Install]
+WantedBy=timers.target

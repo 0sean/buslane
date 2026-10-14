@@ -1,0 +1,12 @@
+**/node_modules
+**/.output
+**/.nitro
+**/.wrangler
+**/target
+**/.turbo
+.git
+**/.env*
+data
+scratch
+**/*.sqlite*
+**/*.zip

@@ -1,23 +1,10 @@
-import * as Sentry from '@sentry/cloudflare';
-
+import * as Sentry from "@sentry/node";
 export default (nitroApp: any) => {
-  let initialized = false;
-
-  nitroApp.hooks.hook('request', () => {
-    if (initialized) return;
-    const dsn = (globalThis as any).__env__?.SENTRY_DSN ?? process.env.SENTRY_DSN;
-    if (dsn) {
-      const init = (Sentry as Record<string, unknown>)["init"];
-      if (typeof init === "function") {
-        init({ dsn, tracesSampleRate: 1.0 });
-        initialized = true;
-      }
-    }
-  });
-
-  nitroApp.hooks.hook('error', async (error: Error) => {
-    console.error(error.name, error.message, error.stack);
+  if (process.env.SENTRY_DSN)
+    Sentry.init({ dsn: process.env.SENTRY_DSN, tracesSampleRate: 0.05 });
+  nitroApp.hooks.hook("error", (error: Error) => {
+    console.error(error);
     Sentry.captureException(error);
-    await Sentry.flush(2000);
   });
+  nitroApp.hooks.hook("close", () => Sentry.close(2000));
 };

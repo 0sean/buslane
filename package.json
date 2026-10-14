@@ -1,18 +1,28 @@
 {
   "name": "buslane",
   "engines": {
-    "node": ">=18"
+    "node": ">=24 <25"
   },
   "packageManager": "bun@1.3.6",
   "private": true,
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "deploy": "turbo run build && terraform -chdir=terraform apply",
-    "deploy:setup": "terraform -chdir=terraform init && terraform -chdir=terraform apply -target=google_artifact_registry_repository.buslane && gcloud auth configure-docker europe-west1-docker.pkg.dev"
+    "test": "cargo build --manifest-path apps/timetables/Cargo.toml --locked && cargo test --manifest-path apps/timetables/Cargo.toml --locked && bun run --cwd apps/api test",
+    "check-types": "turbo run check-types",
+    "deploy": "docker compose up -d --no-build api",
+    "build:images": "docker compose --profile jobs build",
+    "test:compose": "bash scripts/test-compose.sh",
+    "benchmark": "node scripts/benchmark.mjs"
   },
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "trustedDependencies": [
+    "better-sqlite3"
+  ],
+  "devDependencies": {
+    "turbo": "^2.8.20"
+  }
 }

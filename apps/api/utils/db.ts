@@ -1,8 +1,8 @@
-import type { HTTPEvent } from 'h3';
-import type { DB } from '~/db/timetables';
-
-export function useDb(event: HTTPEvent): DB {
-  const db = (event.context as any).db as DB | undefined;
-  if (!db) throw new Error('db not initialized — is the db plugin loaded?');
-  return db;
+import type { HTTPEvent } from "h3";
+import type { QueryPool } from "./pool.ts";
+export function useDb(event: HTTPEvent): QueryPool {
+  const pool = (event as HTTPEvent & { context: { db?: QueryPool } }).context
+    ?.db as QueryPool | undefined;
+  if (!pool) throw new Error("Timetable query pool is not initialized");
+  return pool;
 }

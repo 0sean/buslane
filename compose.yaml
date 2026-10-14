@@ -1,0 +1,52 @@
+services:
+  api:
+    image: ${BUSLANE_API_IMAGE:-buslane-api:local}
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    user: "${BUSLANE_UID:-1000}:${BUSLANE_GID:-1000}"
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 512m
+    pids_limit: 128
+    environment:
+      AUTH_KEY: ${AUTH_KEY:?Set AUTH_KEY in .env}
+      SENTRY_DSN: ${SENTRY_DSN:-}
+      TIMETABLES_DB_PATH: /data/timetables.sqlite
+      TIMETABLES_WORKERS: ${TIMETABLES_WORKERS:-2}
+      TIMETABLES_CACHE_BYTES: ${TIMETABLES_CACHE_BYTES:-33554432}
+    volumes:
+      - ${TIMETABLES_DATA_DIR:-./data}:/data:ro
+    ports:
+      - "127.0.0.1:${API_PORT:-3000}:3000"
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3000/up').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+  importer:
+    image: ${BUSLANE_IMPORTER_IMAGE:-buslane-importer:local}
+    build:
+      context: .
+      dockerfile: apps/timetables/Dockerfile
+    profiles: [jobs]
+    user: "${BUSLANE_UID:-1000}:${BUSLANE_GID:-1000}"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 512m
+    cpus: 1
+    pids_limit: 128
+    environment:
+      TIMETABLES_DB_PATH: /data/timetables.sqlite
+      TIMETABLES_SCRATCH_PATH: /scratch
+      GTFS_SOURCE: ${GTFS_SOURCE:-https://data.bus-data.dft.gov.uk/timetable/download/gtfs-file/all/}
+      MIN_FREE_BYTES: ${MIN_FREE_BYTES:-536870912}
+    volumes:
+      - ${TIMETABLES_DATA_DIR:-./data}:/data
+      - ${TIMETABLES_SCRATCH_DIR:-./scratch}:/scratch

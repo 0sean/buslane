@@ -1,18 +1,13 @@
-# Nitro starter
+# Buslane API
 
-Create your API and deploy it anywhere with this Nitro starter.
+Nitro's Node server preset with a bounded SQLite query-worker pool. See the root README for production deployment, API compatibility, pagination and verification.
 
-## Getting started
+`TIMETABLES_DB_PATH` and `AUTH_KEY` are required. Seed the database with the Rust importer before starting the API. The API validates database identity, SQLite version, schema version and initial import readiness; it never performs migrations or writes timetable data.
 
-```bash
-npm install
-npm run dev
-```
+`bun run build` builds the HTTP server and its standalone query worker. Start it with Node 24 using `node .output/server/index.mjs`. Set `TIMETABLES_WORKER_PATH` when the output is installed in a different directory; Compose supplies it automatically.
 
-## Deploying
+Default settings are two workers, a 32-request pending queue, a 30-second total query deadline and a 32 MiB response cache per worker. `TIMETABLES_WORKERS` accepts 1–4; `TIMETABLES_CACHE_BYTES` adjusts the per-worker cache budget.
 
-```bash
-npm run build
-```
+The shared Drizzle schema describes physical storage. Repository projections in `db/repository.ts` expose public IDs and preserve JSON types and nested structures. Large collections and nested route-trip lists stream bounded batches.
 
-Then checkout the [Nitro documentation](https://v3.nitro.build/deploy) to learn more about the different deployment presets.
+`bun run test` builds the server and runs schema, repository, worker and HTTP integration tests. Build the Rust importer first; root `bun run test` does this automatically.

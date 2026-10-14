@@ -1,13 +1,14 @@
-import type { HTTPEvent } from 'h3';
-import { createDb } from '~/db/timetables';
-
+import { QueryPool } from "../../utils/pool.ts";
 export default (nitroApp: any) => {
-  nitroApp.hooks.hook('request', (event: HTTPEvent) => {
-    const { env } = event.req.runtime!.cloudflare!;
-    const hyperdrive = env.HYPERDRIVE as { connectionString: string; };
-    const connectionString = hyperdrive?.connectionString ?? process.env.TIMETABLES_DATABASE_URL;
-    if (connectionString) {
-      (event.context as any).db = createDb(connectionString);
-    }
+  const database = process.env.TIMETABLES_DB_PATH;
+  if (!database) throw new Error("TIMETABLES_DB_PATH is required");
+  const pool = new QueryPool({
+    database,
+    workers: Number(process.env.TIMETABLES_WORKERS ?? 2),
+    cacheBytes: Number(process.env.TIMETABLES_CACHE_BYTES ?? 33554432),
   });
+  nitroApp.hooks.hook("request", (event: any) => {
+    event.context.db = pool;
+  });
+  nitroApp.hooks.hook("close", () => pool.close());
 };

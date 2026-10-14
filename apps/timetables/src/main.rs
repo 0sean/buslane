@@ -1,123 +1,172 @@
-use self::db::{acquire_advisory_lock, connect, release_advisory_lock};
-use self::validation::run_validation_checks;
-use postgres::{Client, SimpleQueryMessage};
-use std::env;
-use std::fs::File;
-use std::path::{Path, PathBuf};
-use std::time::Instant;
-
 mod db;
-mod validation;
+mod import;
+mod source;
 
-static COPIES: &[(&str, &str, &str)] = &[
-    (
-        "agencies",
-        "agency.txt",
-        include_str!("copies/agencies.sql"),
-    ),
-    ("stops", "stops.txt", include_str!("copies/stops.sql")),
-    ("routes", "routes.txt", include_str!("copies/routes.sql")),
-    (
-        "services",
-        "calendar.txt",
-        include_str!("copies/services.sql"),
-    ),
-    (
-        "calendar_dates",
-        "calendar_dates.txt",
-        include_str!("copies/calendar_dates.sql"),
-    ),
-    ("trips", "trips.txt", include_str!("copies/trips.sql")),
-    ("shapes", "shapes.txt", include_str!("copies/shapes.sql")),
-    (
-        "frequencies",
-        "frequencies.txt",
-        include_str!("copies/frequencies.sql"),
-    ),
-    (
-        "stop_times",
-        "stop_times.txt",
-        include_str!("copies/stop_times.sql"),
-    ),
-];
-
-static TRANSFORMS: &[(&str, &str)] = &[
-    ("agencies", include_str!("transforms/agencies.sql")),
-    ("stops", include_str!("transforms/stops.sql")),
-    ("routes", include_str!("transforms/routes.sql")),
-    ("services", include_str!("transforms/services.sql")),
-    (
-        "calendar_dates",
-        include_str!("transforms/calendar_dates.sql"),
-    ),
-    ("trips", include_str!("transforms/trips.sql")),
-    ("shapes", include_str!("transforms/shapes.sql")),
-    ("frequencies", include_str!("transforms/frequencies.sql")),
-    ("stop_times", include_str!("transforms/stop_times.sql")),
-];
-
-static STAGING_SCHEMA: &str = include_str!("schemas/staging.sql");
-static INDEXES: &str = include_str!("indexes.sql");
-static SWAP: &str = include_str!("swap.sql");
-static DROP: &str = include_str!("drop.sql");
+use anyhow::{Context, Result, bail, ensure};
+use fs2::FileExt;
+use std::env;
+use std::fs::{self, OpenOptions};
+use std::path::PathBuf;
 
 fn main() {
-    let client = &mut connect();
-    acquire_advisory_lock(client);
-
-    let args: Vec<String> = env::args().collect();
-
-    let path = Path::new(&args[1]);
-    if !path.exists() {
-        panic!("Folder does not exist")
+    if let Err(error) = run() {
+        eprintln!("import failed: {error:#}");
+        std::process::exit(1);
     }
-
-    for (table_name, file_name, sql) in COPIES {
-        let file_path = path.join(file_name);
-        if !file_path.exists() {
-            panic!("{} does not exist at {}", file_name, file_path.display())
+}
+fn run() -> Result<()> {
+    let mut database = PathBuf::from(
+        env::var("TIMETABLES_DB_PATH").unwrap_or_else(|_| "./data/timetables.sqlite".into()),
+    );
+    let mut scratch = PathBuf::from(
+        env::var("TIMETABLES_SCRATCH_PATH").unwrap_or_else(|_| "./data/scratch".into()),
+    );
+    let mut source = env::var("GTFS_SOURCE").unwrap_or_else(|_| source::DEFAULT_SOURCE.into());
+    let mut minimum = env::var("MIN_FREE_BYTES")
+        .unwrap_or_else(|_| "536870912".into())
+        .parse::<u64>()?;
+    let mut backup = None;
+    let mut vacuum = false;
+    let mut check = false;
+    let mut args = env::args().skip(1);
+    while let Some(arg) = args.next() {
+        match arg.as_str() {
+            "--db" => database = PathBuf::from(args.next().context("--db requires a path")?),
+            "--scratch" => {
+                scratch = PathBuf::from(args.next().context("--scratch requires a path")?)
+            }
+            "--source" => {
+                source = args
+                    .next()
+                    .context("--source requires a URL, ZIP or directory")?
+            }
+            "--min-free-bytes" => {
+                minimum = args
+                    .next()
+                    .context("--min-free-bytes requires a number")?
+                    .parse()?
+            }
+            "--backup" => {
+                backup = Some(PathBuf::from(
+                    args.next().context("--backup requires an output path")?,
+                ))
+            }
+            "--vacuum" => vacuum = true,
+            "--check" => check = true,
+            "--help" | "-h" => {
+                println!(
+                    "timetables [--db PATH] [--source URL|ZIP|DIR] [--scratch DIR] [--min-free-bytes N] [--backup PATH | --vacuum | --check]"
+                );
+                return Ok(());
+            }
+            _ => bail!("unknown argument {arg}"),
         }
-        copy_table(client, file_path, table_name, sql);
     }
-
-    for (table_name, sql) in TRANSFORMS {
-        println!("Transforming table '{}'", table_name);
-        client
-            .simple_query(sql)
-            .unwrap_or_else(|error| panic!("Failed to transform table '{table_name}': {error:?}"));
+    let parent = database
+        .parent()
+        .filter(|p| !p.as_os_str().is_empty())
+        .unwrap_or(std::path::Path::new("."));
+    fs::create_dir_all(parent)?;
+    fs::create_dir_all(&scratch)?;
+    let mut lock_path = database.as_os_str().to_os_string();
+    lock_path.push(".lock");
+    let lock = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create(true)
+        .truncate(false)
+        .open(PathBuf::from(lock_path))?;
+    match lock.try_lock_exclusive() {
+        Ok(()) => {}
+        Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+            eprintln!("another importer is running; skipped");
+            return Ok(());
+        }
+        Err(error) => return Err(error).context("acquire stable importer lock"),
     }
-
-    println!("Creating indexes");
-    client
-        .simple_query(INDEXES)
-        .unwrap_or_else(|error| panic!("Failed to create indexes: {error:?}"));
-
-    println!("Running validation checks");
-    run_validation_checks(client);
-
-    println!("Swapping tables");
-    client
-        .simple_query(SWAP)
-        .unwrap_or_else(|error| panic!("Failed to swap tables: {error:?}"));
-
-    println!("Dropping and truncating tables");
-    client
-        .simple_query(DROP)
-        .unwrap_or_else(|error| panic!("Failed to drop tables: {error:?}"));
-
-    println!("Reimporting staging schema");
-    client
-        .simple_query(STAGING_SCHEMA)
-        .unwrap_or_else(|error| panic!("Failed to reimport staging schema: {error:?}"));
-
-    release_advisory_lock(client);
+    if !check
+        && !vacuum
+        && backup.is_none()
+        && (source.starts_with("https://") || source.starts_with("http://"))
+    {
+        // A killed downloader cannot run its Drop guard. Clear its reserved
+        // partial files under the database lock before checking free space.
+        for name in ["feed.zip.part", "download.json.part"] {
+            if let Err(error) = fs::remove_file(scratch.join(name))
+                && error.kind() != std::io::ErrorKind::NotFound
+            {
+                return Err(error).context("remove abandoned download");
+            }
+        }
+    }
+    source::check_disk(parent, minimum)?;
+    let mut conn = db::connect(&database)?;
+    ensure!(
+        usize::from(backup.is_some()) + usize::from(vacuum) + usize::from(check) <= 1,
+        "choose only one maintenance operation"
+    );
+    if let Some(path) = backup {
+        ensure!(!path.exists(), "backup destination already exists");
+        conn.backup(rusqlite::MAIN_DB, &path, None)?;
+        println!("backup created: {}", path.display());
+        return Ok(());
+    }
+    if vacuum {
+        conn.execute_batch("VACUUM")?;
+        db::checkpoint(&conn)?;
+        return Ok(());
+    }
+    if check {
+        let integrity: String = conn.query_row("PRAGMA integrity_check", [], |r| r.get(0))?;
+        ensure!(integrity == "ok", "integrity check: {integrity}");
+        let foreign: i64 =
+            conn.query_row("SELECT count(*) FROM pragma_foreign_key_check", [], |r| {
+                r.get(0)
+            })?;
+        ensure!(foreign == 0, "foreign key violations: {foreign}");
+        println!("database checks passed");
+        return Ok(());
+    }
+    let (path, metadata) = source::download(&source, &scratch, minimum)?;
+    let mut input = source::Source::open(&path)?;
+    let report = import::import(&mut conn, &mut input, parent, minimum)?;
+    if report
+        .tables
+        .values()
+        .any(|t| t.inserted + t.updated + t.deleted > 0)
+        && let Err(error) = db::checkpoint(&conn)
+    {
+        eprintln!("update committed; checkpoint maintenance deferred: {error:#}");
+    }
+    if let Some(metadata) = metadata {
+        let save = || -> Result<()> {
+            let partial = scratch.join("download.json.part");
+            fs::write(&partial, serde_json::to_vec(&metadata)?)?;
+            fs::rename(partial, scratch.join("download.json"))?;
+            Ok(())
+        };
+        if let Err(error) = save() {
+            eprintln!("update committed; conditional download metadata was not saved: {error:#}");
+        }
+    }
+    let wal_bytes = fs::metadata(format!("{}-wal", database.display()))
+        .map(|m| m.len())
+        .unwrap_or(0);
+    let memory = fs::read_to_string("/proc/self/status").ok().and_then(|s| {
+        s.lines()
+            .find(|l| l.starts_with("VmHWM:"))
+            .map(str::to_owned)
+    });
+    let identifier_churn:serde_json::Map<String,serde_json::Value>=report.tables.iter().map(|(table,count)| {
+        let current=count.inserted+count.updated+count.unchanged;let previous=count.deleted+count.updated+count.unchanged;
+        (table.clone(),serde_json::json!({"new_identity_fraction":if current==0{0.0}else{count.inserted as f64/current as f64},"removed_identity_fraction":if previous==0{0.0}else{count.deleted as f64/previous as f64}}))
+    }).collect();
+    println!(
+        "{}",
+        serde_json::json!({"report":report,"wal_bytes":wal_bytes,"peak_memory":memory,"identifier_churn":identifier_churn})
+    );
+    Ok(())
 }
 
-fn copy_table(client: &mut Client, path: PathBuf, table_name: &str, sql: &str) {
-    println!("Copying table '{}'", table_name);
-
-    let mut writer = client.copy_in(sql).expect("Failed to initiate COPY");
-    let mut file = File::open(&path).expect("Cannot open file");
-    std::io::copy(&mut file, &mut writer).expect("Failed to copy data");
-    writer.finish().expect("Failed to finish COPY");
-}
+#[cfg(test)]
+mod tests;

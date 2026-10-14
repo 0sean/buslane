@@ -1,56 +1,104 @@
-use chrono::Local;
-use dotenvy::dotenv;
-use native_tls::TlsConnector;
-use postgres::{Client, Config};
-use postgres_native_tls::MakeTlsConnector;
-use std::env;
-use std::str::FromStr;
+use anyhow::{Context, Result, ensure};
+use rusqlite::Connection;
+use std::path::Path;
 use std::time::Duration;
 
-pub fn connect() -> Client {
-    dotenv().ok();
-    let url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    let mut config =
-        Config::from_str(&url).unwrap_or_else(|_| panic!("Invalid DATABASE_URL ({})", url));
-    config
-        .keepalives(true)
-        .keepalives_idle(Duration::from_secs(30))
-        .keepalives_interval(Duration::from_secs(10))
-        .keepalives_retries(3)
-        .tcp_user_timeout(Duration::from_secs(60));
+pub const SCHEMA_VERSION: i64 = 1;
+pub const APPLICATION_ID: i64 = 0x4255534C;
+pub const NORMALISATION_VERSION: i64 = 1;
+const MIGRATION: &str = include_str!("../../../packages/timetable-db/migrations/001.sql");
 
-    let connector = TlsConnector::builder()
-        .danger_accept_invalid_certs(true)
-        .build()
-        .expect("Failed to build TLS connector");
-    let tls = MakeTlsConnector::new(connector);
-    config
-        .connect(tls)
-        .unwrap_or_else(|_| panic!("Error connecting to database ({})", url))
-}
-
-pub fn acquire_advisory_lock(client: &mut Client) {
-    let lock_key = Local::now()
-        .format("%Y%m%d")
-        .to_string()
-        .parse::<i64>()
-        .unwrap();
-    let row = client
-        .query_one("SELECT pg_try_advisory_lock($1)", &[&lock_key])
-        .expect("Cannot acquire advisory lock");
-    let locked: bool = row.get(0);
-    if !locked {
-        panic!("Cannot acquire advisory lock");
+pub fn connect(path: &Path) -> Result<Connection> {
+    let conn = Connection::open(path).context("open timetable database")?;
+    ensure!(
+        rusqlite::version_number() >= 3_051_003,
+        "SQLite >= 3.51.3 is required"
+    );
+    conn.busy_timeout(Duration::from_secs(5))?;
+    conn.set_prepared_statement_cache_capacity(64);
+    let version: i64 = conn.query_row("PRAGMA user_version", [], |row| row.get(0))?;
+    ensure!(
+        version <= SCHEMA_VERSION,
+        "database schema is newer than this importer"
+    );
+    let application: i64 = conn.query_row("PRAGMA application_id", [], |row| row.get(0))?;
+    if version == 0 {
+        let tables: i64 = conn.query_row(
+            "SELECT count(*) FROM sqlite_schema WHERE type='table' AND name NOT LIKE 'sqlite_%'",
+            [],
+            |r| r.get(0),
+        )?;
+        ensure!(
+            tables == 0 && application == 0,
+            "refusing to migrate an unrecognized database"
+        );
+    } else {
+        ensure!(
+            application == APPLICATION_ID,
+            "not a Buslane timetable database"
+        );
     }
+    conn.execute_batch("PRAGMA foreign_keys=ON; PRAGMA page_size=4096; PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA cache_size=-131072; PRAGMA temp_store=FILE;")?;
+    // Keep initialized sidecars available to API containers with read-only mounts.
+    let mut persist: i32 = 1;
+    let code = unsafe {
+        rusqlite::ffi::sqlite3_file_control(
+            conn.handle(),
+            c"main".as_ptr(),
+            rusqlite::ffi::SQLITE_FCNTL_PERSIST_WAL,
+            (&mut persist as *mut i32).cast(),
+        )
+    };
+    ensure!(
+        code == rusqlite::ffi::SQLITE_OK,
+        "cannot preserve WAL sidecars: {code}"
+    );
+    if version == 0 {
+        conn.execute_batch("BEGIN IMMEDIATE")?;
+        if let Err(error) = conn.execute_batch(MIGRATION) {
+            conn.execute_batch("ROLLBACK")?;
+            return Err(error.into());
+        }
+        conn.execute_batch("COMMIT")?;
+    }
+    Ok(conn)
 }
 
-pub fn release_advisory_lock(client: &mut Client) {
-    let lock_key = Local::now()
-        .format("%Y%m%d")
-        .to_string()
-        .parse::<i64>()
-        .unwrap();
-    client
-        .query_one("SELECT pg_advisory_unlock($1)", &[&lock_key])
-        .expect("Cannot release advisory lock");
+pub fn checkpoint(conn: &Connection) -> Result<()> {
+    conn.execute_batch("PRAGMA optimize=0x10002")?;
+    conn.query_row("PRAGMA wal_checkpoint(PASSIVE)", [], |_| Ok(()))?;
+    for _ in 0..3 {
+        let busy: i64 = conn.query_row("PRAGMA wal_checkpoint(TRUNCATE)", [], |r| r.get(0))?;
+        if busy == 0 {
+            return Ok(());
+        }
+        std::thread::sleep(Duration::from_millis(100));
+    }
+    eprintln!("checkpoint deferred: readers still hold a snapshot");
+    Ok(())
+}
+
+/// SQLite tracks unresolved deferred constraints as rows change. Checking the
+/// counter avoids scanning every unchanged timetable row on each daily import.
+pub fn validate_deferred_foreign_keys(conn: &Connection) -> Result<()> {
+    let mut current = 0;
+    let mut highwater = 0;
+    let status = unsafe {
+        rusqlite::ffi::sqlite3_db_status(
+            conn.handle(),
+            rusqlite::ffi::SQLITE_DBSTATUS_DEFERRED_FKS,
+            &mut current,
+            &mut highwater,
+            0,
+        )
+    };
+    ensure!(
+        status == rusqlite::ffi::SQLITE_OK,
+        "cannot inspect deferred foreign keys"
+    );
+    ensure!(
+        current == 0,
+        "validation failed: unresolved foreign key references"
+    );
+    Ok(())
 }
