@@ -91,8 +91,6 @@ Backup destinations must not already exist. Copy completed backups to your backu
 
 To restore, stop the API and the timer, ensure no importer is running, preserve the current database and its sidecars as a recovery set, and install the checked backup as `timetables.sqlite`. Run `importer --check` against it to initialize WAL sidecars and verify integrity, then restart the API and timer. Ensure all files are owned by the configured user. Run `importer --vacuum` only as an explicit maintenance operation with sufficient free space.
 
-After successful production verification, follow [the legacy infrastructure retirement checklist](terraform/README.md). Building this project never pushes images or applies Terraform.
-
 ## Development and verification
 
 Install Node 24 LTS, Bun 1.3.6 and Rust 1.94 or newer. Then:

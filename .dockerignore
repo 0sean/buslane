@@ -6,7 +6,6 @@
 **/.turbo
 .git
 **/.env*
-terraform
 data
 scratch
 **/*.sqlite*
