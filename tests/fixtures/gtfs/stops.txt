@@ -1,4 +1,0 @@
-stop_id,stop_code,stop_name,stop_lat,stop_lon,wheelchair_boarding,location_type,parent_station,platform_code
-S1,001,First Stop,51.5000,-0.1200,1,0,STATION,1
-S2,002,Second Stop,51.5100,-0.1300,0,0,STATION,
-STATION,,Station,51.5050,-0.1250,0,1,,
