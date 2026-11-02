@@ -1,0 +1,12 @@
+[Unit]
+Description=Incremental Buslane fares import
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/buslane
+ExecStart=/usr/bin/docker compose --profile jobs run --rm --no-deps fares-importer
+TimeoutStartSec=23h
+Nice=10

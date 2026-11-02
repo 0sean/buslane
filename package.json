@@ -8,12 +8,13 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "test": "cargo build --manifest-path apps/timetables/Cargo.toml --locked && cargo test --manifest-path apps/timetables/Cargo.toml --locked && bun run --cwd apps/api test",
+    "test": "cargo build --manifest-path apps/timetables/Cargo.toml --locked && cargo test --manifest-path apps/timetables/Cargo.toml --locked && cargo build --manifest-path apps/fares/Cargo.toml --locked && cargo test --manifest-path apps/fares/Cargo.toml --locked && bun run --cwd apps/api test",
     "check-types": "turbo run check-types",
     "deploy": "docker compose up -d --no-build api",
     "build:images": "docker compose --profile jobs build",
     "test:compose": "bash scripts/test-compose.sh",
-    "benchmark": "node scripts/benchmark.mjs"
+    "benchmark": "node scripts/benchmark.mjs",
+    "benchmark:fares": "python3 scripts/benchmark-fares.py"
   },
   "workspaces": [
     "apps/*",

@@ -1,0 +1,10 @@
+{
+  "name": "fares",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "cargo build --release --locked",
+    "test": "cargo test --locked",
+    "check-types": "cargo check --locked"
+  }
+}

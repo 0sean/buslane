@@ -19,8 +19,12 @@ services:
       TIMETABLES_DB_PATH: /data/timetables.sqlite
       TIMETABLES_WORKERS: ${TIMETABLES_WORKERS:-2}
       TIMETABLES_CACHE_BYTES: ${TIMETABLES_CACHE_BYTES:-33554432}
+      FARES_DB_PATH: /fares/fares.sqlite
+      FARES_WORKERS: ${FARES_WORKERS:-1}
+      FARES_CACHE_BYTES: ${FARES_CACHE_BYTES:-8388608}
     volumes:
       - ${TIMETABLES_DATA_DIR:-./data}:/data:ro
+      - ${FARES_DATA_DIR:-./data/fares}:/fares:ro
     ports:
       - "127.0.0.1:${API_PORT:-3000}:3000"
     healthcheck:
@@ -50,3 +54,24 @@ services:
     volumes:
       - ${TIMETABLES_DATA_DIR:-./data}:/data
       - ${TIMETABLES_SCRATCH_DIR:-./scratch}:/scratch
+  fares-importer:
+    image: ${BUSLANE_FARES_IMAGE:-buslane-fares:local}
+    build:
+      context: .
+      dockerfile: apps/fares/Dockerfile
+    profiles: [jobs]
+    user: "${BUSLANE_UID:-1000}:${BUSLANE_GID:-1000}"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 512m
+    cpus: 1
+    pids_limit: 128
+    environment:
+      FARES_DB_PATH: /data/fares.sqlite
+      FARES_SCRATCH_PATH: /scratch
+      FARES_SOURCE: ${FARES_SOURCE:-https://data.bus-data.dft.gov.uk/fares/download/bulk_archive}
+      MIN_FREE_BYTES: ${MIN_FREE_BYTES:-536870912}
+    volumes:
+      - ${FARES_DATA_DIR:-./data/fares}:/data
+      - ${FARES_SCRATCH_DIR:-./scratch/fares}:/scratch

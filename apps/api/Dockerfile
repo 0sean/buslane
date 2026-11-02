@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends python3 make g+
 COPY package.json bun.lock ./
 COPY apps/api/package.json apps/api/package.json
 COPY apps/timetables/package.json apps/timetables/package.json
+COPY apps/fares/package.json apps/fares/package.json
 COPY packages/timetable-db/package.json packages/timetable-db/package.json
 RUN bun install --frozen-lockfile
 COPY apps/api apps/api
@@ -25,6 +26,7 @@ COPY --from=builder /app/apps/api/.output ./apps/api/.output
 USER node
 ENV NODE_ENV=production HOST=0.0.0.0 PORT=3000 \
     TIMETABLES_DB_PATH=/data/timetables.sqlite \
-    TIMETABLES_WORKER_PATH=/app/apps/api/.output/server/timetable-worker.mjs
+    TIMETABLES_WORKER_PATH=/app/apps/api/.output/server/timetable-worker.mjs \
+    FARES_WORKER_PATH=/app/apps/api/.output/server/fares-worker.mjs
 EXPOSE 3000
 CMD ["node", "apps/api/.output/server/index.mjs"]

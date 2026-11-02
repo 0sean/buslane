@@ -25,6 +25,7 @@ test("built Nitro API preserves routes, auth, pagination, errors and readiness",
         TIMETABLES_WORKER_PATH: workerPath,
         AUTH_KEY: "fixture-token",
         SENTRY_DSN: "",
+        FARES_DB_PATH: "",
         HOST: "127.0.0.1",
         PORT: String(port),
       },
@@ -49,6 +50,7 @@ test("built Nitro API preserves routes, auth, pagination, errors and readiness",
     }
     assert.ok(ready, output);
     assert.equal((await fetch(base + "/api/timetables/stops")).status, 400);
+    assert.equal((await get("/api/fares/products")).status, 503);
     for (const path of [
       "/agencies",
       "/agencies/A1",

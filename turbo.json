@@ -1,6 +1,7 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
   "ui": "tui",
+  "globalPassThroughEnv": ["CARGO_HOME", "TMPDIR", "SQLITE_TMPDIR"],
   "tasks": {
     "build": {
       "dependsOn": [
@@ -32,11 +33,15 @@
     "timetables#build": {
       "cache": false
     },
+    "fares#build": {
+      "cache": false
+    },
     "test": {
       "cache": false
     }
   },
   "globalDependencies": [
-    "packages/timetable-db/migrations/*.sql"
+    "packages/timetable-db/migrations/*.sql",
+    "packages/fares-db/migrations/*.sql"
   ]
 }

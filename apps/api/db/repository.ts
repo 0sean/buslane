@@ -11,7 +11,10 @@ export type Kind =
   | "trip"
   | "service"
   | "stops"
-  | "stopTimes";
+  | "stopTimes"
+  | "agencyFareContext"
+  | "routeFareContext"
+  | "stopFareContext";
 export interface Query {
   kind: Kind;
   id?: string;
@@ -343,6 +346,32 @@ export class Repository {
         }
     }
     switch (query.kind) {
+      case "agencyFareContext": {
+        collection = false;
+        items = [{ noc: this.agency(query.id!).noc }];
+        break;
+      }
+      case "routeFareContext": {
+        collection = false;
+        const route = this.route(query.id!);
+        const agency = this.required(
+          this.get("SELECT noc FROM agencies WHERE id=?", route._agency),
+          "Agency",
+        );
+        if (!route.short_name)
+          throw new QueryError(
+            422,
+            "Route has no public line code for fare matching",
+          );
+        items = [{ noc: agency.noc, line: route.short_name }];
+        break;
+      }
+      case "stopFareContext": {
+        collection = false;
+        const stop = this.stop(query.id!);
+        items = [{ stop: stop.public_id.replace(/^(?:atco|naptan):/, "") }];
+        break;
+      }
       case "agencies":
         items = flattened(
           batches(

@@ -1,6 +1,8 @@
 import { MessageChannel, Worker } from "node:worker_threads";
 import { resolve } from "node:path";
 import type { Query } from "../db/repository.ts";
+import type { FaresQuery } from "../db/fares/repository.ts";
+type PoolQuery = Query | FaresQuery;
 
 export interface PoolResult {
   body: string | ReadableStream<Uint8Array>;
@@ -24,7 +26,7 @@ interface Slot {
 }
 interface Task {
   type: "query" | "health";
-  query?: Query;
+  query?: PoolQuery;
   resolve: (value: PoolResult) => void;
   reject: (error: unknown) => void;
   signal?: AbortSignal;
@@ -46,9 +48,13 @@ export class QueryPool {
     }
   >();
   private sequence = 0;
+  private get label() {
+    return this.options.resource === "fares" ? "Fares" : "Timetable";
+  }
   constructor(
     private options: {
       database: string;
+      resource?: "timetables" | "fares";
       workerPath?: string;
       workers?: number;
       maximumQueue?: number;
@@ -58,19 +64,23 @@ export class QueryPool {
   ) {
     const count = options.workers ?? 2;
     if (!Number.isInteger(count) || count < 1 || count > 4)
-      throw new Error("TIMETABLES_WORKERS must be between 1 and 4");
+      throw new Error("Database workers must be between 1 and 4");
     for (let i = 0; i < count; i++) this.spawn();
   }
   private spawn() {
     if (this.closed) return;
     const workerPath =
       this.options.workerPath ??
-      process.env.TIMETABLES_WORKER_PATH ??
+      process.env[
+        this.options.resource === "fares"
+          ? "FARES_WORKER_PATH"
+          : "TIMETABLES_WORKER_PATH"
+      ] ??
       resolve(
         process.cwd(),
         process.cwd().endsWith("/apps/api")
-          ? ".output/server/timetable-worker.mjs"
-          : "apps/api/.output/server/timetable-worker.mjs",
+          ? `.output/server/${this.options.resource === "fares" ? "fares" : "timetable"}-worker.mjs`
+          : `apps/api/.output/server/${this.options.resource === "fares" ? "fares" : "timetable"}-worker.mjs`,
       );
     const slot: Slot = {
       worker: new Worker(workerPath, {
@@ -107,7 +117,9 @@ export class QueryPool {
       if (!slot.ready)
         for (const task of this.queue.splice(0)) {
           task.queueCleanup?.();
-          task.reject(new PoolError(503, "Timetable database is unavailable"));
+          task.reject(
+            new PoolError(503, this.label + " database is unavailable"),
+          );
         }
     });
     slot.worker.on("exit", () => {
@@ -116,19 +128,19 @@ export class QueryPool {
       if (slot.ready && !this.closed) this.spawn();
     });
   }
-  query(query: Query, signal?: AbortSignal) {
+  query(query: PoolQuery, signal?: AbortSignal) {
     return this.submit({ type: "query", query }, signal);
   }
   health(signal?: AbortSignal) {
     return this.submit({ type: "health" }, signal);
   }
   private submit(
-    input: { type: "query" | "health"; query?: Query },
+    input: { type: "query" | "health"; query?: PoolQuery },
     signal?: AbortSignal,
   ): Promise<PoolResult> {
     return new Promise((resolve, reject) => {
       if (this.closed || !this.slots.length) {
-        reject(new PoolError(503, "Timetable database is unavailable"));
+        reject(new PoolError(503, this.label + " database is unavailable"));
         return;
       }
       if (signal?.aborted) {
@@ -136,7 +148,7 @@ export class QueryPool {
         return;
       }
       if (this.queue.length >= (this.options.maximumQueue ?? 32)) {
-        reject(new PoolError(503, "Timetable query queue is full"));
+        reject(new PoolError(503, this.label + " query queue is full"));
         return;
       }
       const task: Task = {
@@ -152,7 +164,7 @@ export class QueryPool {
         if (index >= 0) {
           this.queue.splice(index, 1);
           task.queueCleanup?.();
-          reject(new PoolError(504, "Timetable query timed out in queue"));
+          reject(new PoolError(504, this.label + " query timed out in queue"));
         }
       }, this.options.timeoutMs ?? 30000);
       const abort = () => {
@@ -198,7 +210,10 @@ export class QueryPool {
       this.drain();
       console.info(
         JSON.stringify({
-          event: "timetable_query",
+          event:
+            this.options.resource === "fares"
+              ? "fares_query"
+              : "timetable_query",
           kind: task.query?.kind ?? "health",
           duration_ms: Math.round(performance.now() - started),
         }),
@@ -216,7 +231,7 @@ export class QueryPool {
     const exit = () => fail(new PoolError(503, "Query worker stopped"));
     const timer = setTimeout(
       () => {
-        fail(new PoolError(504, "Timetable query timed out"), true);
+        fail(new PoolError(504, this.label + " query timed out"), true);
       },
       Math.max(1, task.deadline - Date.now()),
     );
@@ -274,7 +289,7 @@ export class QueryPool {
   invalidate(): Promise<number> {
     return new Promise((resolve, reject) => {
       if (this.closed || !this.slots.length) {
-        reject(new PoolError(503, "Timetable database is unavailable"));
+        reject(new PoolError(503, this.label + " database is unavailable"));
         return;
       }
       const id = ++this.sequence;

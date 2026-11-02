@@ -2,6 +2,8 @@
 
 Buslane imports the national BODS GTFS timetable feed and serves it through an authenticated Nitro API. Production runs on a 64-bit Raspberry Pi with local USB SSD storage.
 
+The Rust [fares importer](apps/fares/README.md) imports the BODS bulk NeTEx archive into a separate SQLite database. The API exposes products, prices, zones and rules under `/api/fares`, with links from timetable agencies, routes and stops. See its README for import commands, API filters, pricing semantics and SSD benchmarks.
+
 The Rust importer is the only database writer. It publishes validated updates in one SQLite WAL transaction while the API's read-only connections continue serving the previous dataset. Public timetable routes and response shapes remain compatible with the previous API.
 
 ## Production setup
@@ -11,9 +13,10 @@ Use Docker Engine and Compose v2. Build images on a machine with ARM64 build sup
 ```sh
 docker buildx build --platform linux/arm64 -f apps/api/Dockerfile -t buslane-api:local --output type=docker,dest=/tmp/buslane-api-arm64.tar .
 docker buildx build --platform linux/arm64 -f apps/timetables/Dockerfile -t buslane-importer:local --output type=docker,dest=/tmp/buslane-importer-arm64.tar .
+docker buildx build --platform linux/arm64 -f apps/fares/Dockerfile -t buslane-fares:local --output type=docker,dest=/tmp/buslane-fares-arm64.tar .
 ```
 
-Load both archives on the Pi with `docker load -i PATH`. For local testing on the builder's architecture, use `docker compose --profile jobs build`.
+Load the image archives on the Pi with `docker load -i PATH`. For local testing on the builder's architecture, use `docker compose --profile jobs build`.
 
 Place the checkout at `/opt/buslane`, copy `.env.example` to `.env`, and set a strong `AUTH_KEY`. Use a dedicated scratch directory per database. Point the data and scratch directories to the USB SSD and set `BUSLANE_UID`/`BUSLANE_GID` to their owner's IDs. Create both directories with write access for that user. Keep SQLite on a local filesystem, not an NFS/SMB mount.
 
@@ -21,6 +24,7 @@ Seed the database before starting the API:
 
 ```sh
 docker compose --profile jobs run --rm --no-deps importer
+docker compose --profile jobs run --rm --no-deps fares-importer
 docker compose up -d --no-build api
 curl --fail http://127.0.0.1:3000/up
 ```

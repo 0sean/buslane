@@ -1,0 +1,422 @@
+{
+  "date": "2026-11-02",
+  "import": {
+    "machine": "Linux-6.12.113+deb13-cloud-arm64-aarch64-with-glibc2.41",
+    "processor": "aarch64",
+    "feeds": [
+      {
+        "path": "/mnt/ssd/buslane-fares/bulk.zip",
+        "bytes": 2372579710,
+        "sha256": "794e60367558402049039e3cd79106e60445f75601f1b787815b9c52ac5f7889"
+      },
+      {
+        "path": "/mnt/ssd/buslane-fares/bulk-one-price-change.zip",
+        "bytes": 2372596306,
+        "sha256": "f0160d53cfc78339199e4d6f49d461ee9921f684f2ec34a42431148acf12183d"
+      }
+    ],
+    "runs": [
+      {
+        "command": [
+          "/home/seansean297/buslane/apps/fares/target/release/fares",
+          "--db",
+          "/mnt/ssd/buslane-fares/national-optimized/fares.sqlite",
+          "--source",
+          "/mnt/ssd/buslane-fares/bulk.zip",
+          "--scratch",
+          "/mnt/ssd/buslane-fares/national-optimized/scratch"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 4473.149053715,
+        "user_seconds": 3341.646127,
+        "system_seconds": 238.013128,
+        "peak_rss_kib": 360692,
+        "block_inputs": 328963240,
+        "block_outputs": 447740264,
+        "import": {
+          "peak_memory": "VmHWM:\t  360692 kB",
+          "report": {
+            "archives_skipped": 0,
+            "documents_deleted": 0,
+            "documents_inserted": 154278,
+            "documents_skipped": 0,
+            "documents_updated": 0,
+            "elapsed_ms": 4178343,
+            "entities_deleted": 0,
+            "entities_inserted": 45070264,
+            "entities_unchanged": 0,
+            "entities_updated": 0,
+            "generation": 1,
+            "sqlite_changes": 90828329
+          }
+        },
+        "name": "initial",
+        "database_bytes": 74961506304,
+        "wal_bytes": 0,
+        "peak_wal_bytes": 75400746272
+      },
+      {
+        "command": [
+          "/home/seansean297/buslane/apps/fares/target/release/fares",
+          "--db",
+          "/mnt/ssd/buslane-fares/national-optimized/fares.sqlite",
+          "--source",
+          "/mnt/ssd/buslane-fares/bulk.zip",
+          "--scratch",
+          "/mnt/ssd/buslane-fares/national-optimized/scratch"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 6.233432689999972,
+        "user_seconds": 5.977681,
+        "system_seconds": 0.211917,
+        "peak_rss_kib": 18960,
+        "block_inputs": 131672,
+        "block_outputs": 64,
+        "import": {
+          "peak_memory": "VmHWM:\t   19040 kB",
+          "report": {
+            "archives_skipped": 566,
+            "documents_deleted": 0,
+            "documents_inserted": 0,
+            "documents_skipped": 154278,
+            "documents_updated": 0,
+            "elapsed_ms": 6179,
+            "entities_deleted": 0,
+            "entities_inserted": 0,
+            "entities_unchanged": 0,
+            "entities_updated": 0,
+            "generation": 1,
+            "sqlite_changes": 0
+          },
+          "wal_bytes_before_checkpoint": 0
+        },
+        "name": "identical",
+        "database_bytes": 74961506304,
+        "wal_bytes": 0,
+        "peak_wal_bytes": 0
+      },
+      {
+        "command": [
+          "/home/seansean297/buslane/apps/fares/target/release/fares",
+          "--db",
+          "/mnt/ssd/buslane-fares/national-optimized/fares.sqlite",
+          "--source",
+          "/mnt/ssd/buslane-fares/bulk-one-price-change.zip",
+          "--scratch",
+          "/mnt/ssd/buslane-fares/national-optimized/scratch"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 20.691466156000388,
+        "user_seconds": 12.435067,
+        "system_seconds": 1.14401,
+        "peak_rss_kib": 206768,
+        "block_inputs": 5459240,
+        "block_outputs": 568,
+        "import": {
+          "peak_memory": "VmHWM:\t  206768 kB",
+          "report": {
+            "archives_skipped": 565,
+            "documents_deleted": 0,
+            "documents_inserted": 0,
+            "documents_skipped": 154277,
+            "documents_updated": 1,
+            "elapsed_ms": 20613,
+            "entities_deleted": 0,
+            "entities_inserted": 0,
+            "entities_unchanged": 1114,
+            "entities_updated": 2,
+            "generation": 2,
+            "sqlite_changes": 5
+          },
+          "wal_bytes_before_checkpoint": 107152
+        },
+        "name": "update-1",
+        "database_bytes": 74961551360,
+        "wal_bytes": 0,
+        "peak_wal_bytes": 107152
+      }
+    ],
+    "binary_sha256": {
+      "initial": "c9ed4da7da30782a555b538faa033bd0661fae3b0e29a9a68e485927eb306079",
+      "incremental": "1ff3f1fae649f32602f9ced6842a5c346ae515332b75287724425fca6394f0e6"
+    }
+  },
+  "api": {
+    "samples": 100,
+    "clients": 5,
+    "plans": {
+      "products": [
+        {
+          "id": 4,
+          "parent": 0,
+          "notused": 176,
+          "detail": "SEARCH entities USING COVERING INDEX entities_category (category=? AND id>?)"
+        }
+      ],
+      "document_prices": [
+        {
+          "id": 4,
+          "parent": 0,
+          "notused": 63,
+          "detail": "SEARCH entities USING COVERING INDEX entities_document_category (document_id=? AND category=? AND id>?)"
+        }
+      ],
+      "operator_products": [
+        {
+          "id": 4,
+          "parent": 0,
+          "notused": 111,
+          "detail": "SEARCH entities USING COVERING INDEX entities_document_category (document_id=? AND category=? AND id>?)"
+        },
+        {
+          "id": 8,
+          "parent": 0,
+          "notused": 0,
+          "detail": "LIST SUBQUERY 1"
+        },
+        {
+          "id": 10,
+          "parent": 8,
+          "notused": 79,
+          "detail": "SEARCH links USING COVERING INDEX links_lookup (kind=? AND code=?)"
+        },
+        {
+          "id": 43,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ],
+      "late_operator_products": [
+        {
+          "id": 5,
+          "parent": 0,
+          "notused": 123,
+          "detail": "SEARCH entities USING INDEX entities_document_category (document_id=? AND category=? AND id>?)"
+        },
+        {
+          "id": 9,
+          "parent": 0,
+          "notused": 0,
+          "detail": "LIST SUBQUERY 1"
+        },
+        {
+          "id": 11,
+          "parent": 9,
+          "notused": 79,
+          "detail": "SEARCH links USING COVERING INDEX links_lookup (kind=? AND code=?)"
+        },
+        {
+          "id": 65,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    "latency": {
+      "products": {
+        "cold_ms": 32.85103700000002,
+        "p50_ms": 9.450088999999934,
+        "p95_ms": 14.275719999999978,
+        "maximum_ms": 18.554159000000027
+      },
+      "prices": {
+        "cold_ms": 9.867926000000125,
+        "p50_ms": 4.06951099999992,
+        "p95_ms": 6.268170000000055,
+        "maximum_ms": 7.152916000000005
+      },
+      "product": {
+        "cold_ms": 3.2738220000001093,
+        "p50_ms": 1.4555370000000494,
+        "p95_ms": 3.253887999999961,
+        "maximum_ms": 3.774936000000025
+      },
+      "operator": {
+        "cold_ms": 7.150523999999905,
+        "p50_ms": 4.715694999999869,
+        "p95_ms": 6.541574999999966,
+        "maximum_ms": 11.55668700000001
+      },
+      "late_operator": {
+        "cold_ms": 8.186525999999958,
+        "p50_ms": 4.615141999999878,
+        "p95_ms": 6.103522999999996,
+        "maximum_ms": 9.56697999999983
+      }
+    }
+  },
+  "currency_lookup_optimization": [
+    {
+      "peak_memory": "VmHWM:\t   59852 kB",
+      "report": {
+        "archives_skipped": 0,
+        "documents_deleted": 0,
+        "documents_inserted": 1,
+        "documents_skipped": 0,
+        "documents_updated": 0,
+        "elapsed_ms": 692,
+        "entities_deleted": 0,
+        "entities_inserted": 12118,
+        "entities_unchanged": 0,
+        "entities_updated": 0,
+        "generation": 1,
+        "sqlite_changes": 12659
+      },
+      "wall_seconds": 0.7065872659995875
+    },
+    {
+      "peak_memory": "VmHWM:\t   59036 kB",
+      "report": {
+        "archives_skipped": 0,
+        "documents_deleted": 0,
+        "documents_inserted": 1,
+        "documents_skipped": 0,
+        "documents_updated": 0,
+        "elapsed_ms": 354,
+        "entities_deleted": 0,
+        "entities_inserted": 12118,
+        "entities_unchanged": 0,
+        "entities_updated": 0,
+        "generation": 1,
+        "sqlite_changes": 12659
+      },
+      "wall_seconds": 0.3687206029999288
+    }
+  ],
+  "controlled_change": {
+    "path": "Nu-Venture_324/77_AD_SGL.xml",
+    "before": "1.80",
+    "after": "1.81"
+  },
+  "national_database_check": {
+    "pragma": "quick_check",
+    "result": "ok",
+    "elapsed_ms": 925116,
+    "documents": 154278,
+    "generation_at_check": 2
+  },
+  "arm_accelerated_incremental": [
+    {
+      "command": [
+        "/home/seansean297/buslane/apps/fares/target/release/fares",
+        "--db",
+        "/mnt/ssd/buslane-fares/national-optimized/fares.sqlite",
+        "--source",
+        "/mnt/ssd/buslane-fares/bulk.zip",
+        "--scratch",
+        "/mnt/ssd/buslane-fares/national-optimized/scratch"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.876179086000775,
+      "user_seconds": 1.395563,
+      "system_seconds": 0.28229299999999996,
+      "peak_rss_kib": 19004,
+      "block_inputs": 24584,
+      "block_outputs": 72,
+      "peak_wal_bytes": 0,
+      "import": {
+        "peak_memory": "VmHWM:\t   19064 kB",
+        "report": {
+          "archives_skipped": 566,
+          "documents_deleted": 0,
+          "documents_inserted": 0,
+          "documents_skipped": 154278,
+          "documents_updated": 0,
+          "elapsed_ms": 1869,
+          "entities_deleted": 0,
+          "entities_inserted": 0,
+          "entities_unchanged": 0,
+          "entities_updated": 0,
+          "generation": 3,
+          "sqlite_changes": 0
+        },
+        "wal_bytes_before_checkpoint": 0
+      },
+      "name": "identical-arm"
+    },
+    {
+      "command": [
+        "/home/seansean297/buslane/apps/fares/target/release/fares",
+        "--db",
+        "/mnt/ssd/buslane-fares/national-optimized/fares.sqlite",
+        "--source",
+        "/mnt/ssd/buslane-fares/bulk-one-price-change.zip",
+        "--scratch",
+        "/mnt/ssd/buslane-fares/national-optimized/scratch"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 4.963239716998942,
+      "user_seconds": 3.455694,
+      "system_seconds": 0.754842,
+      "peak_rss_kib": 205000,
+      "block_inputs": 1835296,
+      "block_outputs": 512,
+      "peak_wal_bytes": 107152,
+      "import": {
+        "peak_memory": "VmHWM:\t  205000 kB",
+        "report": {
+          "archives_skipped": 565,
+          "documents_deleted": 0,
+          "documents_inserted": 0,
+          "documents_skipped": 154277,
+          "documents_updated": 1,
+          "elapsed_ms": 4889,
+          "entities_deleted": 0,
+          "entities_inserted": 0,
+          "entities_unchanged": 1114,
+          "entities_updated": 2,
+          "generation": 4,
+          "sqlite_changes": 5
+        },
+        "wal_bytes_before_checkpoint": 107152
+      },
+      "name": "update-arm"
+    },
+    {
+      "command": [
+        "/home/seansean297/buslane/apps/fares/target/release/fares",
+        "--db",
+        "/mnt/ssd/buslane-fares/national-optimized/fares.sqlite",
+        "--source",
+        "/mnt/ssd/buslane-fares/bulk.zip",
+        "--scratch",
+        "/mnt/ssd/buslane-fares/national-optimized/scratch"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.921589056999437,
+      "user_seconds": 3.2537409999999998,
+      "system_seconds": 0.656351,
+      "peak_rss_kib": 205304,
+      "block_inputs": 1304,
+      "block_outputs": 504,
+      "peak_wal_bytes": 107152,
+      "import": {
+        "peak_memory": "VmHWM:\t  205304 kB",
+        "report": {
+          "archives_skipped": 565,
+          "documents_deleted": 0,
+          "documents_inserted": 0,
+          "documents_skipped": 154277,
+          "documents_updated": 1,
+          "elapsed_ms": 3842,
+          "entities_deleted": 0,
+          "entities_inserted": 0,
+          "entities_unchanged": 1114,
+          "entities_updated": 2,
+          "generation": 5,
+          "sqlite_changes": 5
+        },
+        "wal_bytes_before_checkpoint": 107152
+      },
+      "name": "restore-arm"
+    }
+  ],
+  "final_binary_sha256": "280cf0a9a6f4a725ad11624b7ef4461b070532670aa4f2d1e8cae29a26beefd6",
+  "official_snapshot_restored": {
+    "generation": 5,
+    "amount": "1.80",
+    "source_sha256": "794e60367558402049039e3cd79106e60445f75601f1b787815b9c52ac5f7889"
+  }
+}

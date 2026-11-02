@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PublicationDelivery xmlns="http://www.netex.org.uk/netex" version="1.1">
+  <PublicationTimestamp>2026-11-01T00:00:00Z</PublicationTimestamp>
+  <dataObjects><CompositeFrame id="offer" version="1">
+    <FrameDefaults><DefaultCurrency>GBP</DefaultCurrency></FrameDefaults>
+    <frames>
+      <ResourceFrame id="resources"><organisations>
+        <Operator id="noc:ONE"><PublicCode>ONE</PublicCode><Name>One &amp; Sons</Name></Operator>
+        <Operator id="uic:Station_Management:0070"><PublicCode>NR</PublicCode><Name>Shared rail metadata</Name></Operator>
+      </organisations></ResourceFrame>
+      <ServiceFrame id="network">
+        <lines><Line id="line:1"><Name>Town bus</Name><PublicCode>1</PublicCode><OperatorRef ref="noc:ONE"/></Line></lines>
+        <scheduledStopPoints>
+          <ScheduledStopPoint id="atco:S1"><Name>First stop</Name></ScheduledStopPoint>
+          <ScheduledStopPoint id="atco:S2"><Name>Second stop</Name></ScheduledStopPoint>
+        </scheduledStopPoints>
+      </ServiceFrame>
+      <FareFrame id="fares">
+        <fareZones>
+          <FareZone id="zone:A"><Name>A</Name><members><ScheduledStopPointRef ref="atco:S1"/></members></FareZone>
+          <FareZone id="zone:B"><Name>B</Name><members><ScheduledStopPointRef ref="atco:S2"/></members></FareZone>
+        </fareZones>
+        <tariffs><Tariff id="tariff:1"><fareStructureElements><FareStructureElement id="stages">
+          <distanceMatrixElements><DistanceMatrixElement id="matrix:AB">
+            <priceGroups><PriceGroupRef ref="band:2"/></priceGroups>
+            <StartTariffZoneRef ref="zone:A"/><EndTariffZoneRef ref="zone:B"/>
+          </DistanceMatrixElement></distanceMatrixElements>
+        </FareStructureElement></fareStructureElements></Tariff></tariffs>
+        <fareProducts>
+          <PreassignedFareProduct id="product:adult" version="1"><Name>Adult single</Name><ProductType>singleTrip</ProductType><validableElements><ValidableElement id="travel"><fareStructureElements><FareStructureElementRef ref="stages"/></fareStructureElements></ValidableElement></validableElements></PreassignedFareProduct>
+          <PreassignedFareProduct id="product:child" version="1"><Name>Child single</Name><ProductType>singleTrip</ProductType></PreassignedFareProduct>
+        </fareProducts>
+        <salesOfferPackages><SalesOfferPackage id="offer:cash"><Name>Onboard cash</Name><salesOfferPackageElements><SalesOfferPackageElement id="cash:adult"><PreassignedFareProductRef ref="product:adult"/></SalesOfferPackageElement></salesOfferPackageElements></SalesOfferPackage></salesOfferPackages>
+        <usageParameters><UserProfile id="adult"><Name>Adult</Name></UserProfile></usageParameters>
+        <priceGroups><PriceGroup id="band:2"><members><GeographicalIntervalPrice id="price:adult" version="1"><Amount>2.00</Amount></GeographicalIntervalPrice></members></PriceGroup></priceGroups>
+        <fareTables><FareTable id="table:adult"><pricesFor><PreassignedFareProductRef ref="product:adult"/><SalesOfferPackageRef ref="offer:cash"/><UserProfileRef ref="adult"/></pricesFor><specifics><LineRef ref="line:1"/></specifics><cells><Cell id="cell:AB"><DistanceMatrixElementPrice id="fare:AB"><GeographicalIntervalPriceRef ref="price:adult"/><DistanceMatrixElementRef ref="matrix:AB"/></DistanceMatrixElementPrice></Cell></cells></FareTable></fareTables>
+      </FareFrame>
+    </frames>
+  </CompositeFrame></dataObjects>
+</PublicationDelivery>

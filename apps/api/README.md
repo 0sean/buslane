@@ -11,3 +11,5 @@ Default settings are two workers, a 32-request pending queue, a 30-second total 
 The shared Drizzle schema describes physical storage. Repository projections in `db/repository.ts` expose public IDs and preserve JSON types and nested structures. Large collections and nested route-trip lists stream bounded batches.
 
 `bun run test` builds the server and runs schema, repository, worker and HTTP integration tests. Build the Rust importer first; root `bun run test` does this automatically.
+
+Optional `FARES_DB_PATH` enables the fares catalogue and timetable-linked fares routes. Seed it with `apps/fares` first. `FARES_WORKERS` defaults to 1, `FARES_CACHE_BYTES` to 8 MiB; `FARES_WORKER_PATH` locates the additional built worker. See [the fares README](../fares/README.md) for endpoints, filters, incremental behavior and pricing semantics. Build both Rust importers before running the API tests.
