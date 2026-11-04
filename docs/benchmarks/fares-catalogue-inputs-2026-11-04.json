@@ -1,0 +1,150 @@
+{
+  "retrieved_date": "2026-11-04",
+  "source_url": "https://data.bus-data.dft.gov.uk/fares/download/bulk_archive",
+  "national_archive_bytes": 2196692731,
+  "national_archive_sha256": "c55d58f9430b193c8a6e1eeb97e450f2d0018a783794b806848ed00a339f10f2",
+  "anea_member": "Arriva UK Bus_63/9936_129314_2026-11-03_16-02-31_current.zip",
+  "anea_archive_bytes": 83839787,
+  "anea_archive_sha256": "545080a022db98c618dbb204d910cf1d262e45c83be757ec0c9c4bb308fbe24c",
+  "anea_expanded_xml_bytes": 1276468929,
+  "fixtures": {
+    "catalogue-nuventure.zip": {
+      "zip_sha256": "651598b2dd6d7b98949e15bbd484c3bc527c61efe1ff28ca3a1ff47f4fbe3250",
+      "documents": [
+        {
+          "name": "Nu-Venture_324/77_AD_SGL.xml",
+          "bytes": 780534,
+          "sha256": "6bee1761b767eebb7e14a4ecbe83b066b5d5af8eddb435c29ebfe88e367a81e4",
+          "products": [
+            "single Ticket - adult"
+          ],
+          "matrix_cells": 496,
+          "amounts": [
+            "0",
+            "0.40",
+            "0.60",
+            "0.70",
+            "1.50",
+            "1.70",
+            "1.80",
+            "1.95",
+            "2.20",
+            "2.30",
+            "2.50",
+            "2.60",
+            "2.80",
+            "2.90",
+            "3.70",
+            "3.80",
+            "3.90",
+            "4.00",
+            "4.20",
+            "4.80"
+          ]
+        }
+      ]
+    },
+    "catalogue-anea.zip": {
+      "zip_sha256": "61973f31973b846beb096250d1f9b388a4a41694e7d48648e0193058f4173132",
+      "documents": [
+        {
+          "name": "ANEA_FF_ADDurhamDay_1Day_NoTicketValidityPeriod_639293166149291481.xml",
+          "bytes": 76005,
+          "sha256": "12933c745a4e4f779ad7be6ed6ed694a2360b69e1d355c7d9fd7765e502b245a",
+          "products": [
+            "AD Durham Day Pass"
+          ],
+          "matrix_cells": 0,
+          "amounts": [
+            "6.00"
+          ]
+        },
+        {
+          "name": "ANEA_FF_ADDurhamWK1_1Week_NoTicketValidityPeriod_639293166235281989.xml",
+          "bytes": 75810,
+          "sha256": "e8a6229d922ee8bee1a754ae36185010562caf65ce3354937c6ca35f19e78a1c",
+          "products": [
+            "AD Durham WK1 Pass"
+          ],
+          "matrix_cells": 0,
+          "amounts": [
+            "29.00"
+          ]
+        },
+        {
+          "name": "ANEA_FF_YPDurhamWK1_1Week_NoTicketValidityPeriod_639293166202367954.xml",
+          "bytes": 75847,
+          "sha256": "7ab41337d9588852ed82f6ce7710396f82aec3f4acd605ae61ddea10f3058e7e",
+          "products": [
+            "YP Durham WK1 Pass"
+          ],
+          "matrix_cells": 0,
+          "amounts": [
+            "20.50"
+          ]
+        },
+        {
+          "name": "ANEA_10D6_Inbound_ADSGLREF_NoTicketValidityPeriod_639293154425281017.xml",
+          "bytes": 3677027,
+          "sha256": "4cfd6b7f8df82d74edb5cdceb59cc2a41e9a14bcbbac0e10f66ba3a262783e61",
+          "products": [
+            "AD SGL REF"
+          ],
+          "matrix_cells": 3136,
+          "amounts": [
+            "1.8",
+            "2.4",
+            "5.0",
+            "5.2"
+          ]
+        },
+        {
+          "name": "ANEA_10D6_Inbound_ADSGL_NoTicketValidityPeriod_639293154537213799.xml",
+          "bytes": 3611425,
+          "sha256": "cd54b6dc6b098993692238328188d081b4ee4bce434cfdcf413c97be0bcb9b93",
+          "products": [
+            "AD SGL"
+          ],
+          "matrix_cells": 3136,
+          "amounts": [
+            "1.8",
+            "2.4",
+            "2.5"
+          ]
+        }
+      ]
+    },
+    "catalogue-stagecoach.zip": {
+      "zip_sha256": "cb77561984721d38d20ed2d4bf3028c4f37228057d96b47835f0f9ae240d7d6e",
+      "documents": [
+        {
+          "name": "FX_PI_01_UK_SSWL_LINE_FARE_001_O_Adult\u2010Return\u2010Cwmbran_wef-20260901_20260902-0837.xml",
+          "bytes": 68972,
+          "sha256": "a337bf91aa480b59ab85a130128995ea0feb052daea3fc648cfa26fffe73c988",
+          "products": [
+            "Return WA"
+          ],
+          "matrix_cells": 0,
+          "amounts": []
+        }
+      ]
+    }
+  },
+  "source_counts": {
+    "documents": 5761,
+    "entities": 1441080,
+    "product_names": 138,
+    "product_types": {
+      "other": 175,
+      "periodPass": 4637,
+      "singleTrip": 949
+    },
+    "frequent_names": {
+      "AD SGL": 236,
+      "AD SGL REF": 224,
+      "U22 SGL": 160,
+      "CH SGL REF": 148,
+      "YP REGION WK Pass": 125
+    }
+  }
+}

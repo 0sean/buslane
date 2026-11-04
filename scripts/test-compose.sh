@@ -12,7 +12,8 @@ export BUSLANE_API_IMAGE=buslane-api:local BUSLANE_IMPORTER_IMAGE=buslane-import
 export BUSLANE_FARES_IMAGE=buslane-fares:local
 mkdir -p "$TIMETABLES_DATA_DIR" "$TIMETABLES_SCRATCH_DIR" "$FARES_DATA_DIR" "$FARES_SCRATCH_DIR"
 cp -R "$repo_dir/tests/fixtures/gtfs" "$task_dir/feed"
-cp -R "$repo_dir/tests/fixtures/netex" "$task_dir/fares-feed"
+mkdir -p "$task_dir/fares-feed"
+cp "$repo_dir/tests/fixtures/netex/fares.xml" "$task_dir/fares-feed/fares.xml"
 cat > "$task_dir/override.yaml" <<EOF
 services:
   importer:
@@ -62,6 +63,11 @@ for(const path of ['/api/timetables/agencies/A1/fares','/api/timetables/routes/1
   const linked=await fetch(base+path,{headers:{Authorization:'Bearer compose-fixture-token'}});
   assert.equal(linked.status,200);assert.equal((await linked.json()).length,2);
 }
+const catalogueHeaders={Authorization:'Bearer compose-fixture-token'};
+const catalogueBase=base+'/api/fares/operators/ONE';
+const families=await fetch(catalogueBase+'/families',{headers:catalogueHeaders});assert.equal(families.status,200);assert.equal((await families.json()).length,2);
+const routes=await (await fetch(catalogueBase+'/routes',{headers:catalogueHeaders})).json();assert.equal(routes.length,1);
+const origins=await (await fetch(catalogueBase+`/routes/${routes[0].id}/origins`,{headers:catalogueHeaders})).json();assert.equal(origins.length,1);
 const price=await fetch(base+'/api/fares/prices?ref=price%3Aadult',{headers:{Authorization:'Bearer compose-fixture-token'}});
 assert.equal((await price.json())[0].amount,'2.00');
 JS

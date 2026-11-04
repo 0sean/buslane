@@ -1,3 +1,4 @@
+import { catalogue } from "./catalogue.ts";
 import type Database from "better-sqlite3";
 import { createHash } from "node:crypto";
 import { inflateRawSync } from "node:zlib";
@@ -5,6 +6,7 @@ import { QueryError } from "../repository.ts";
 
 export interface FaresQuery {
   kind:
+    | "catalogue"
     | "fareDocuments"
     | "fareDocument"
     | "fareProducts"
@@ -12,6 +14,16 @@ export interface FaresQuery {
     | "fareEntities"
     | "fareEntity"
     | "fareXml";
+  action?: string;
+  relation?: string;
+  family_id?: string;
+  q?: string;
+  generation?: string;
+  route_id?: string;
+  origin?: string;
+  destination?: string;
+  date?: string;
+  include_unclassified?: string;
   id?: string;
   document_id?: number;
   category?: string;
@@ -92,6 +104,8 @@ export class FaresRepository {
     query: FaresQuery,
     generation: number,
   ): { chunks: Generator<string>; nextCursor(): string | undefined } {
+    if (query.kind === "catalogue")
+      return catalogue(this.db, query, generation);
     const single = ["fareDocument", "fareEntity", "fareXml"].includes(
       query.kind,
     );

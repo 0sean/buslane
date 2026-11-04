@@ -1,3 +1,4 @@
+mod catalogue;
 mod db;
 mod import;
 mod netex;

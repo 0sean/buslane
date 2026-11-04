@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { HTTPError, getQuery, type HTTPEvent } from "h3";
 import { PoolError, type QueryPool } from "./pool.ts";
 import type { FaresQuery } from "../db/fares/repository.ts";
@@ -26,6 +27,14 @@ export async function fares(
     "line",
     "stop",
     "cursor",
+    "q",
+    "generation",
+    "route_id",
+    "origin",
+    "destination",
+    "date",
+    "include_unclassified",
+    "family_id",
   ] as const) {
     const value = params[key];
     if (value === undefined) continue;
@@ -47,7 +56,7 @@ export async function fares(
       query[key] = Number(value);
     } else query[key] = value;
   }
-  query.limit ??= 100;
+  query.limit ??= query.kind === "catalogue" ? 50 : 100;
   for (const key of [
     "category",
     "noc",
@@ -56,6 +65,7 @@ export async function fares(
     "ref",
     "product_ref",
     "document_id",
+    "route_id",
   ] as const)
     if (fixedFilters[key] !== undefined)
       Object.assign(query, { [key]: fixedFilters[key] });
@@ -66,6 +76,23 @@ export async function fares(
       "x-fares-generation": String(result.generation),
       "cache-control": "private, no-store",
     });
+    if (query.kind === "catalogue") {
+      headers.set("x-catalogue-version", "1");
+      headers.set("x-catalogue-generation", String(result.generation));
+      const etag =
+        '"' +
+        createHash("sha256")
+          .update(JSON.stringify([result.generation, query]))
+          .digest("hex") +
+        '"';
+      headers.set("etag", etag);
+      headers.set("cache-control", "private, no-cache");
+      if (
+        event.req.headers.get("if-none-match") === etag &&
+        typeof result.body === "string"
+      )
+        return new Response(null, { status: 304, headers });
+    }
     if (result.nextCursor) headers.set("x-next-cursor", result.nextCursor);
     if (query.kind === "fareXml") {
       headers.set("content-type", "application/xml; charset=utf-8");

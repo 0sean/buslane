@@ -42,6 +42,7 @@ pub struct Parsed {
     pub currency: Option<String>,
     pub entities: Vec<Entity>,
     pub links: Vec<Link>,
+    pub catalogue: crate::catalogue::Projection,
 }
 
 fn is(node: Node<'_, '_>, tag: &str) -> bool {
@@ -190,6 +191,7 @@ pub fn parse(xml: &[u8]) -> Result<Parsed> {
             .map(|s| s.trim().into()),
         entities: Vec::new(),
         links: Vec::new(),
+        catalogue: crate::catalogue::derive(&doc, &defaults),
     };
     let mut occurrences = HashMap::<(String, String, String), u32>::new();
     for node in doc

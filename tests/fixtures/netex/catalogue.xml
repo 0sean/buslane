@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PublicationDelivery xmlns="http://www.netex.org.uk/netex" version="1.1">
+ <PublicationTimestamp>2026-11-01T00:00:01Z</PublicationTimestamp>
+ <dataObjects><CompositeFrame id="bundle" version="1">
+  <ValidBetween><FromDate>2026-11-01T00:00:00Z</FromDate><ToDate>2027-10-31T23:59:59Z</ToDate></ValidBetween>
+  <FrameDefaults><DefaultCurrency>GBP</DefaultCurrency></FrameDefaults>
+  <frames><ResourceFrame id="resources"><organisations><Operator id="noc:ONE" version="1"><PublicCode>ONE</PublicCode><Name>Example operator</Name></Operator></organisations></ResourceFrame>
+  <FareFrame id="network" version="1"><fareZones>
+   <FareZone id="day-zone" version="1"><Name>County Zone</Name><members><ScheduledStopPointRef ref="atco:S1"/><ScheduledStopPointRef ref="atco:S2"/></members><ScopingMethod>explicitStops</ScopingMethod></FareZone>
+   <FareZone id="week-zone" version="1"><Name>County</Name><members><ScheduledStopPointRef ref="atco:S2"/><ScheduledStopPointRef ref="atco:S1"/></members><ScopingMethod>explicitStops</ScopingMethod></FareZone>
+  </fareZones></FareFrame>
+  <FareFrame id="products" version="1"><tariffs><Tariff id="tariff" version="1"><OperatorRef ref="noc:ONE" version="1"/><fareStructureElements>
+   <FareStructureElement id="day-access" version="1"><TypeOfFareStructureElementRef ref="fxc:access"/><GenericParameterAssignment id="day-access" version="1"><TypeOfAccessRightAssignmentRef ref="fxc:can_access"/><ValidityParameterGroupingType>XOR</ValidityParameterGroupingType><validityParameters><FareZoneRef ref="day-zone" version="1"/></validityParameters></GenericParameterAssignment></FareStructureElement>
+   <FareStructureElement id="week-access" version="1"><TypeOfFareStructureElementRef ref="fxc:access"/><GenericParameterAssignment id="week-access" version="1"><TypeOfAccessRightAssignmentRef ref="fxc:can_access"/><ValidityParameterGroupingType>XOR</ValidityParameterGroupingType><validityParameters><FareZoneRef ref="week-zone" version="1"/></validityParameters></GenericParameterAssignment></FareStructureElement>
+  </fareStructureElements></Tariff></tariffs><fareProducts>
+   <PreassignedFareProduct id="day" version="1"><Name>County Day</Name><ProductType>periodPass</ProductType><OperatorRef ref="noc:ONE" version="1"/><validableElements><ValidableElement id="day-travel" version="1"><fareStructureElements><FareStructureElementRef ref="day-access" version="1"/></fareStructureElements><limitations><UserProfile id="adult" version="1"><UserType>adult</UserType></UserProfile><UsageValidityPeriod id="day-duration"><StandardDuration>P1D</StandardDuration></UsageValidityPeriod></limitations></ValidableElement></validableElements></PreassignedFareProduct>
+   <PreassignedFareProduct id="week" version="1"><Name>County Week</Name><ProductType>periodPass</ProductType><OperatorRef ref="noc:ONE" version="1"/><validableElements><ValidableElement id="week-travel" version="1"><fareStructureElements><FareStructureElementRef ref="week-access" version="1"/></fareStructureElements><limitations><UsageValidityPeriod id="week-duration"><StandardDuration>P7D</StandardDuration></UsageValidityPeriod></limitations></ValidableElement></validableElements></PreassignedFareProduct>
+   <PreassignedFareProduct id="donation" version="1"><Name>Donate</Name><ProductType>other</ProductType><fareStructureElements><FareStructureElementRef ref="day-access" version="1"/></fareStructureElements></PreassignedFareProduct>
+  </fareProducts><salesOfferPackages><SalesOfferPackage id="cash" version="1"><distributionAssignments><DistributionAssignment id="onboard"><DistributionChannelType>onBoard</DistributionChannelType><PaymentMethods>cash</PaymentMethods></DistributionAssignment></distributionAssignments></SalesOfferPackage></salesOfferPackages></FareFrame>
+  <FareFrame id="prices" version="1"><fareTables>
+   <FareTable id="day-price" version="1"><pricesFor><PreassignedFareProductRef ref="day" version="1"/><SalesOfferPackageRef ref="cash" version="1"/></pricesFor><cells><Cell id="day-cell"><TimeIntervalPrice id="day-amount" version="1"><Amount>6.00</Amount></TimeIntervalPrice></Cell></cells></FareTable>
+   <FareTable id="week-price" version="1"><pricesFor><PreassignedFareProductRef ref="week" version="1"/></pricesFor><cells><Cell id="week-cell"><TimeIntervalPrice id="week-amount" version="1"><Amount>29.00</Amount></TimeIntervalPrice></Cell></cells></FareTable>
+  </fareTables></FareFrame>
+ </frames></CompositeFrame></dataObjects>
+</PublicationDelivery>

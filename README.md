@@ -130,3 +130,7 @@ bun run benchmark --feed /ssd/feeds/day-one.zip --feed /ssd/feeds/day-two.zip --
 The benchmark starts an isolated local API/database, performs an initial import, an identical repeat and each subsequent feed update, and measures warm and concurrent-import operator/trip latency at five clients. It records GNU time CPU/RSS/I/O counters, WAL growth, table/index sizes, query plans and acceptance checks in `results.json`. It requires `/usr/bin/time` and a new output directory. Optional `--agency` and `--trip` select representative public IDs; `--samples` controls the baseline sample count.
 
 Targets are zero timetable writes for identical feeds, importer RSS below 512 MiB, completion before the next daily run, and warm operator/trip p95 below 250 ms at five concurrent clients. Inspect insert/delete counts for upstream identifier churn: incremental gains depend on ID stability. Local fixture tests do not establish national-feed performance on the Pi.
+
+Passenger fares browsing is documented in [the derived catalogue API and bus.rip migration guide](docs/fares-catalogue.md), with [measured operator-scale benchmarks](docs/benchmarks/fares-catalogue-2026-11-04.md).
+
+For an existing production installation, follow [the catalogue upgrade runbook](docs/fares-catalogue-production.md): back up with the old importer, load matching ARM64 images, backfill the complete feed, then recreate the API before deploying the new consumer.

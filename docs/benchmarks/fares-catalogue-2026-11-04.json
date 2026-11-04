@@ -1,0 +1,1901 @@
+{
+  "date": "2026-11-04",
+  "status": "final implementation verified",
+  "environment": {
+    "cores": 4,
+    "cpu": "ARM Neoverse-V2",
+    "scratch": "local NVMe /mnt/ssd",
+    "rust": "1.99.1",
+    "node": "24.11.0",
+    "bun": "1.4.4",
+    "python": "3.13.5",
+    "api_sqlite": "3.53.2"
+  },
+  "import": {
+    "machine": "Linux-6.12.113+deb13-cloud-arm64-aarch64-with-glibc2.41",
+    "processor": "aarch64",
+    "feeds": [
+      {
+        "path": "/tmp/anea.zip",
+        "bytes": 83839787,
+        "sha256": "545080a022db98c618dbb204d910cf1d262e45c83be757ec0c9c4bb308fbe24c"
+      },
+      {
+        "path": "/tmp/anea-price-update.zip",
+        "bytes": 86357552,
+        "sha256": "758dde80cddfabad3ef68d046bf431a40220092b4f41123fc7fece5851d3bee2"
+      },
+      {
+        "path": "/tmp/anea-removal.zip",
+        "bytes": 86221215,
+        "sha256": "ea27c4b5dc1f96e74a26c44d7a02f735001d5589d23b9b952411fb474015e6c4"
+      },
+      {
+        "path": "/tmp/anea.zip",
+        "bytes": 83839787,
+        "sha256": "545080a022db98c618dbb204d910cf1d262e45c83be757ec0c9c4bb308fbe24c"
+      }
+    ],
+    "runs": [
+      {
+        "command": [
+          "/home/seansean297/buslane/apps/fares/target/release/fares",
+          "--db",
+          "/mnt/ssd/buslane-catalogue/final-delivery/fares.sqlite",
+          "--source",
+          "/tmp/anea.zip",
+          "--scratch",
+          "/mnt/ssd/buslane-catalogue/final-delivery/scratch"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 142.6741795129983,
+        "user_seconds": 95.070208,
+        "system_seconds": 11.615644,
+        "peak_rss_kib": 189048,
+        "block_inputs": 8107088,
+        "block_outputs": 22108648,
+        "peak_wal_bytes": 3691116272,
+        "import": {
+          "peak_memory": "VmHWM:\t  189048 kB",
+          "report": {
+            "archives_skipped": 0,
+            "documents_deleted": 0,
+            "documents_inserted": 5761,
+            "documents_skipped": 0,
+            "documents_updated": 0,
+            "elapsed_ms": 133112,
+            "entities_deleted": 0,
+            "entities_inserted": 1441080,
+            "entities_unchanged": 0,
+            "entities_updated": 0,
+            "generation": 1,
+            "projection_ms": 35064,
+            "sqlite_changes": 6106194
+          },
+          "wal_bytes_before_checkpoint": 3691116272
+        },
+        "name": "initial",
+        "database_bytes": 3669655552,
+        "wal_bytes": 0
+      },
+      {
+        "command": [
+          "/home/seansean297/buslane/apps/fares/target/release/fares",
+          "--db",
+          "/mnt/ssd/buslane-catalogue/final-delivery/fares.sqlite",
+          "--source",
+          "/tmp/anea.zip",
+          "--scratch",
+          "/mnt/ssd/buslane-catalogue/final-delivery/scratch"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.06540112000038789,
+        "user_seconds": 0.045071,
+        "system_seconds": 0.018779,
+        "peak_rss_kib": 11600,
+        "block_inputs": 176,
+        "block_outputs": 64,
+        "peak_wal_bytes": 0,
+        "import": {
+          "peak_memory": "VmHWM:\t    5776 kB",
+          "report": {
+            "archives_skipped": 1,
+            "documents_deleted": 0,
+            "documents_inserted": 0,
+            "documents_skipped": 5761,
+            "documents_updated": 0,
+            "elapsed_ms": 58,
+            "entities_deleted": 0,
+            "entities_inserted": 0,
+            "entities_unchanged": 0,
+            "entities_updated": 0,
+            "generation": 1,
+            "projection_ms": 0,
+            "sqlite_changes": 0
+          },
+          "wal_bytes_before_checkpoint": 0
+        },
+        "name": "identical",
+        "database_bytes": 3669655552,
+        "wal_bytes": 0
+      },
+      {
+        "command": [
+          "/home/seansean297/buslane/apps/fares/target/release/fares",
+          "--db",
+          "/mnt/ssd/buslane-catalogue/final-delivery/fares.sqlite",
+          "--source",
+          "/tmp/anea-price-update.zip",
+          "--scratch",
+          "/mnt/ssd/buslane-catalogue/final-delivery/scratch"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.8595107159999316,
+        "user_seconds": 1.611684,
+        "system_seconds": 0.10073,
+        "peak_rss_kib": 58620,
+        "block_inputs": 29296,
+        "block_outputs": 9264,
+        "peak_wal_bytes": 1874632,
+        "import": {
+          "peak_memory": "VmHWM:\t   58620 kB",
+          "report": {
+            "archives_skipped": 0,
+            "documents_deleted": 0,
+            "documents_inserted": 0,
+            "documents_skipped": 5760,
+            "documents_updated": 1,
+            "elapsed_ms": 1844,
+            "entities_deleted": 0,
+            "entities_inserted": 0,
+            "entities_unchanged": 6467,
+            "entities_updated": 2,
+            "generation": 2,
+            "projection_ms": 131,
+            "sqlite_changes": 313
+          },
+          "wal_bytes_before_checkpoint": 1874632
+        },
+        "name": "update-1",
+        "database_bytes": 3669839872,
+        "wal_bytes": 0
+      },
+      {
+        "command": [
+          "/home/seansean297/buslane/apps/fares/target/release/fares",
+          "--db",
+          "/mnt/ssd/buslane-catalogue/final-delivery/fares.sqlite",
+          "--source",
+          "/tmp/anea-removal.zip",
+          "--scratch",
+          "/mnt/ssd/buslane-catalogue/final-delivery/scratch"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.483947578999505,
+        "user_seconds": 1.416291,
+        "system_seconds": 0.05617,
+        "peak_rss_kib": 37044,
+        "block_inputs": 384,
+        "block_outputs": 13552,
+        "peak_wal_bytes": 3448472,
+        "import": {
+          "peak_memory": "VmHWM:\t   37044 kB",
+          "report": {
+            "archives_skipped": 0,
+            "documents_deleted": 1,
+            "documents_inserted": 0,
+            "documents_skipped": 5760,
+            "documents_updated": 0,
+            "elapsed_ms": 1464,
+            "entities_deleted": 725,
+            "entities_inserted": 0,
+            "entities_unchanged": 0,
+            "entities_updated": 0,
+            "generation": 3,
+            "projection_ms": 30,
+            "sqlite_changes": 1659
+          },
+          "wal_bytes_before_checkpoint": 3448472
+        },
+        "name": "update-2",
+        "database_bytes": 3669839872,
+        "wal_bytes": 0
+      },
+      {
+        "command": [
+          "/home/seansean297/buslane/apps/fares/target/release/fares",
+          "--db",
+          "/mnt/ssd/buslane-catalogue/final-delivery/fares.sqlite",
+          "--source",
+          "/tmp/anea.zip",
+          "--scratch",
+          "/mnt/ssd/buslane-catalogue/final-delivery/scratch"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.7605380549994152,
+        "user_seconds": 1.6365859999999999,
+        "system_seconds": 0.10403699999999999,
+        "peak_rss_kib": 67540,
+        "block_inputs": 0,
+        "block_outputs": 23544,
+        "peak_wal_bytes": 5479632,
+        "import": {
+          "peak_memory": "VmHWM:\t   67540 kB",
+          "report": {
+            "archives_skipped": 0,
+            "documents_deleted": 0,
+            "documents_inserted": 1,
+            "documents_skipped": 5759,
+            "documents_updated": 1,
+            "elapsed_ms": 1746,
+            "entities_deleted": 0,
+            "entities_inserted": 725,
+            "entities_unchanged": 6467,
+            "entities_updated": 2,
+            "generation": 4,
+            "projection_ms": 169,
+            "sqlite_changes": 1970
+          },
+          "wal_bytes_before_checkpoint": 5479632
+        },
+        "name": "update-3",
+        "database_bytes": 3669839872,
+        "wal_bytes": 0
+      }
+    ]
+  },
+  "api": {
+    "samples": 100,
+    "clients": 5,
+    "noc": "ANEA",
+    "counts": {
+      "documents": 5761,
+      "entities": 1441080,
+      "catalogue_objects": 11764,
+      "catalogue_sources": 54455,
+      "catalogue_journeys": 544246
+    },
+    "byKind": [
+      {
+        "kind": "area",
+        "count": 242
+      },
+      {
+        "kind": "family",
+        "count": 138
+      },
+      {
+        "kind": "point",
+        "count": 6210
+      },
+      {
+        "kind": "route",
+        "count": 96
+      },
+      {
+        "kind": "ticket",
+        "count": 5078
+      }
+    ],
+    "storage": [
+      {
+        "category": "catalogue",
+        "bytes": 1105809408
+      },
+      {
+        "category": "source",
+        "bytes": 2563846144
+      }
+    ],
+    "plans": {
+      "areas": [
+        {
+          "sql": "SELECT catalogue_version FROM dataset WHERE id=1",
+          "params": [],
+          "plan": [
+            {
+              "id": 2,
+              "parent": 0,
+              "notused": 33,
+              "detail": "SEARCH dataset USING INTEGER PRIMARY KEY (rowid=?)"
+            }
+          ]
+        },
+        {
+          "sql": "SELECT o.id,o.kind,o.name,o.revision,o.ticket_count,o.family_id,o.summary FROM catalogue_objects o WHERE o.noc=? AND o.active=1 AND o.kind=? AND o.id>? ORDER BY o.id LIMIT ?",
+          "params": [
+            "ANEA",
+            "area",
+            "",
+            51
+          ],
+          "plan": [
+            {
+              "id": 7,
+              "parent": 0,
+              "notused": 101,
+              "detail": "SEARCH o USING INDEX catalogue_browse (noc=? AND kind=? AND active=? AND id>?)"
+            }
+          ]
+        }
+      ],
+      "tickets": [
+        {
+          "sql": "SELECT catalogue_version FROM dataset WHERE id=1",
+          "params": [],
+          "plan": [
+            {
+              "id": 2,
+              "parent": 0,
+              "notused": 33,
+              "detail": "SEARCH dataset USING INTEGER PRIMARY KEY (rowid=?)"
+            }
+          ]
+        },
+        {
+          "sql": "SELECT o.id,o.kind,o.name,o.revision,o.ticket_count,o.family_id,o.summary FROM catalogue_objects o WHERE o.noc=? AND o.active=1 AND o.kind=? AND o.travel=1 AND o.id>? ORDER BY o.id LIMIT ?",
+          "params": [
+            "ANEA",
+            "ticket",
+            "",
+            51
+          ],
+          "plan": [
+            {
+              "id": 7,
+              "parent": 0,
+              "notused": 146,
+              "detail": "SEARCH o USING INDEX catalogue_travel_browse (noc=? AND kind=? AND active=? AND travel=? AND id>?)"
+            }
+          ]
+        }
+      ],
+      "search": [
+        {
+          "sql": "SELECT catalogue_version FROM dataset WHERE id=1",
+          "params": [],
+          "plan": [
+            {
+              "id": 2,
+              "parent": 0,
+              "notused": 33,
+              "detail": "SEARCH dataset USING INTEGER PRIMARY KEY (rowid=?)"
+            }
+          ]
+        },
+        {
+          "sql": "SELECT o.id,o.kind,o.name,o.revision,o.ticket_count,o.family_id,o.summary,o.search FROM catalogue_objects o WHERE o.noc=? AND o.active=1 AND o.kind=? AND o.travel=1 AND o.search>=? AND o.search<? ORDER BY o.search,o.id LIMIT ?",
+          "params": [
+            "ANEA",
+            "ticket",
+            "ad",
+            "ad\udbff\udfff",
+            51
+          ],
+          "plan": [
+            {
+              "id": 7,
+              "parent": 0,
+              "notused": 132,
+              "detail": "SEARCH o USING INDEX catalogue_travel_search (noc=? AND kind=? AND active=? AND travel=? AND search>? AND search<?)"
+            }
+          ]
+        }
+      ],
+      "routes": [
+        {
+          "sql": "SELECT catalogue_version FROM dataset WHERE id=1",
+          "params": [],
+          "plan": [
+            {
+              "id": 2,
+              "parent": 0,
+              "notused": 33,
+              "detail": "SEARCH dataset USING INTEGER PRIMARY KEY (rowid=?)"
+            }
+          ]
+        },
+        {
+          "sql": "SELECT o.id,o.kind,o.name,o.revision,o.ticket_count,o.family_id,o.summary FROM catalogue_objects o WHERE o.noc=? AND o.active=1 AND o.kind=? AND o.id>? ORDER BY o.id LIMIT ?",
+          "params": [
+            "ANEA",
+            "route",
+            "",
+            51
+          ],
+          "plan": [
+            {
+              "id": 7,
+              "parent": 0,
+              "notused": 88,
+              "detail": "SEARCH o USING INDEX catalogue_browse (noc=? AND kind=? AND active=? AND id>?)"
+            }
+          ]
+        }
+      ],
+      "area_families": [
+        {
+          "sql": "SELECT catalogue_version FROM dataset WHERE id=1",
+          "params": [],
+          "plan": [
+            {
+              "id": 2,
+              "parent": 0,
+              "notused": 33,
+              "detail": "SEARCH dataset USING INTEGER PRIMARY KEY (rowid=?)"
+            }
+          ]
+        },
+        {
+          "sql": "SELECT * FROM catalogue_objects WHERE id=? AND noc=?",
+          "params": [
+            "area_00dc37e121f9ecdea9cefdcbe1d0645282ad3dade43d078862afe7937e39833a",
+            "ANEA"
+          ],
+          "plan": [
+            {
+              "id": 3,
+              "parent": 0,
+              "notused": 39,
+              "detail": "SEARCH catalogue_objects USING INDEX sqlite_autoindex_catalogue_objects_1 (id=?)"
+            }
+          ]
+        },
+        {
+          "sql": "SELECT o.id,o.kind,o.name,o.revision,o.ticket_count,o.family_id,o.summary,e.variant_count FROM catalogue_area_families e CROSS JOIN catalogue_objects o ON o.id=e.family_id WHERE o.noc=? AND o.active=1 AND o.kind=? AND o.travel=1 AND e.area_id=? AND e.travel=1 AND e.family_id>? ORDER BY e.family_id LIMIT ?",
+          "params": [
+            "ANEA",
+            "family",
+            "area_00dc37e121f9ecdea9cefdcbe1d0645282ad3dade43d078862afe7937e39833a",
+            "",
+            51
+          ],
+          "plan": [
+            {
+              "id": 8,
+              "parent": 0,
+              "notused": 52,
+              "detail": "SEARCH e USING PRIMARY KEY (area_id=? AND family_id>?)"
+            },
+            {
+              "id": 18,
+              "parent": 0,
+              "notused": 37,
+              "detail": "SEARCH o USING INDEX catalogue_travel_browse (noc=? AND kind=? AND active=? AND travel=? AND id=?)"
+            }
+          ]
+        }
+      ],
+      "area_tickets": [
+        {
+          "sql": "SELECT catalogue_version FROM dataset WHERE id=1",
+          "params": [],
+          "plan": [
+            {
+              "id": 2,
+              "parent": 0,
+              "notused": 33,
+              "detail": "SEARCH dataset USING INTEGER PRIMARY KEY (rowid=?)"
+            }
+          ]
+        },
+        {
+          "sql": "SELECT * FROM catalogue_objects WHERE id=? AND noc=?",
+          "params": [
+            "area_00dc37e121f9ecdea9cefdcbe1d0645282ad3dade43d078862afe7937e39833a",
+            "ANEA"
+          ],
+          "plan": [
+            {
+              "id": 3,
+              "parent": 0,
+              "notused": 39,
+              "detail": "SEARCH catalogue_objects USING INDEX sqlite_autoindex_catalogue_objects_1 (id=?)"
+            }
+          ]
+        },
+        {
+          "sql": "SELECT o.id,o.kind,o.name,o.revision,o.ticket_count,o.family_id,o.summary FROM catalogue_edges e CROSS JOIN catalogue_objects o ON o.id=e.source_id WHERE o.noc=? AND o.active=1 AND o.kind=? AND o.travel=1 AND e.target_id=? AND e.relation=? AND e.travel=1 AND e.source_id>? ORDER BY e.source_id LIMIT ?",
+          "params": [
+            "ANEA",
+            "ticket",
+            "area_00dc37e121f9ecdea9cefdcbe1d0645282ad3dade43d078862afe7937e39833a",
+            "area",
+            "",
+            51
+          ],
+          "plan": [
+            {
+              "id": 8,
+              "parent": 0,
+              "notused": 58,
+              "detail": "SEARCH e USING COVERING INDEX catalogue_edges_browse (target_id=? AND relation=? AND travel=? AND source_id>?)"
+            },
+            {
+              "id": 19,
+              "parent": 0,
+              "notused": 48,
+              "detail": "SEARCH o USING INDEX catalogue_travel_browse (noc=? AND kind=? AND active=? AND travel=? AND id=?)"
+            }
+          ]
+        }
+      ],
+      "stops": [
+        {
+          "sql": "SELECT catalogue_version FROM dataset WHERE id=1",
+          "params": [],
+          "plan": [
+            {
+              "id": 2,
+              "parent": 0,
+              "notused": 33,
+              "detail": "SEARCH dataset USING INTEGER PRIMARY KEY (rowid=?)"
+            }
+          ]
+        },
+        {
+          "sql": "SELECT * FROM catalogue_objects WHERE id=? AND noc=?",
+          "params": [
+            "area_00dc37e121f9ecdea9cefdcbe1d0645282ad3dade43d078862afe7937e39833a",
+            "ANEA"
+          ],
+          "plan": [
+            {
+              "id": 3,
+              "parent": 0,
+              "notused": 39,
+              "detail": "SEARCH catalogue_objects USING INDEX sqlite_autoindex_catalogue_objects_1 (id=?)"
+            }
+          ]
+        },
+        {
+          "sql": "SELECT code,name FROM catalogue_stops WHERE object_id=? AND code>? ORDER BY code LIMIT ?",
+          "params": [
+            "area_00dc37e121f9ecdea9cefdcbe1d0645282ad3dade43d078862afe7937e39833a",
+            "",
+            51
+          ],
+          "plan": [
+            {
+              "id": 6,
+              "parent": 0,
+              "notused": 52,
+              "detail": "SEARCH catalogue_stops USING PRIMARY KEY (object_id=? AND code>?)"
+            }
+          ]
+        }
+      ],
+      "detail": [
+        {
+          "sql": "SELECT catalogue_version FROM dataset WHERE id=1",
+          "params": [],
+          "plan": [
+            {
+              "id": 2,
+              "parent": 0,
+              "notused": 33,
+              "detail": "SEARCH dataset USING INTEGER PRIMARY KEY (rowid=?)"
+            }
+          ]
+        },
+        {
+          "sql": "SELECT * FROM catalogue_objects WHERE id=? AND noc=?",
+          "params": [
+            "ticket_00062d3d117d08a53ff1a4676ec1998466e1efea1b79251095d716a53cbc1b3b",
+            "ANEA"
+          ],
+          "plan": [
+            {
+              "id": 3,
+              "parent": 0,
+              "notused": 39,
+              "detail": "SEARCH catalogue_objects USING INDEX sqlite_autoindex_catalogue_objects_1 (id=?)"
+            }
+          ]
+        }
+      ],
+      "origins": [
+        {
+          "sql": "SELECT catalogue_version FROM dataset WHERE id=1",
+          "params": [],
+          "plan": [
+            {
+              "id": 2,
+              "parent": 0,
+              "notused": 33,
+              "detail": "SEARCH dataset USING INTEGER PRIMARY KEY (rowid=?)"
+            }
+          ]
+        },
+        {
+          "sql": "SELECT * FROM catalogue_objects WHERE id=? AND noc=?",
+          "params": [
+            "route_0323eac3579a15710c651829b1413b1b543fc6f17a1868e79e03db02cd654c2d",
+            "ANEA"
+          ],
+          "plan": [
+            {
+              "id": 3,
+              "parent": 0,
+              "notused": 39,
+              "detail": "SEARCH catalogue_objects USING INDEX sqlite_autoindex_catalogue_objects_1 (id=?)"
+            }
+          ]
+        },
+        {
+          "sql": "SELECT o.id,o.kind,o.name,o.revision,o.ticket_count,o.family_id,o.summary FROM catalogue_route_origins p JOIN catalogue_objects o ON o.id=p.origin_id WHERE p.route_id=? AND p.origin_id>? ORDER BY p.origin_id LIMIT ?",
+          "params": [
+            "route_0323eac3579a15710c651829b1413b1b543fc6f17a1868e79e03db02cd654c2d",
+            "",
+            51
+          ],
+          "plan": [
+            {
+              "id": 8,
+              "parent": 0,
+              "notused": 68,
+              "detail": "SEARCH p USING PRIMARY KEY (route_id=? AND origin_id>?)"
+            },
+            {
+              "id": 16,
+              "parent": 0,
+              "notused": 42,
+              "detail": "SEARCH o USING INDEX sqlite_autoindex_catalogue_objects_1 (id=?)"
+            }
+          ]
+        }
+      ],
+      "destinations": [
+        {
+          "sql": "SELECT catalogue_version FROM dataset WHERE id=1",
+          "params": [],
+          "plan": [
+            {
+              "id": 2,
+              "parent": 0,
+              "notused": 33,
+              "detail": "SEARCH dataset USING INTEGER PRIMARY KEY (rowid=?)"
+            }
+          ]
+        },
+        {
+          "sql": "SELECT * FROM catalogue_objects WHERE id=? AND noc=?",
+          "params": [
+            "route_0323eac3579a15710c651829b1413b1b543fc6f17a1868e79e03db02cd654c2d",
+            "ANEA"
+          ],
+          "plan": [
+            {
+              "id": 3,
+              "parent": 0,
+              "notused": 39,
+              "detail": "SEARCH catalogue_objects USING INDEX sqlite_autoindex_catalogue_objects_1 (id=?)"
+            }
+          ]
+        },
+        {
+          "sql": "SELECT * FROM catalogue_objects WHERE id=? AND noc=?",
+          "params": [
+            "point_3a65d58abfd7150d9fed3c05eabeec01cb504bab1a1833ab01b29c8aef922d58",
+            "ANEA"
+          ],
+          "plan": [
+            {
+              "id": 3,
+              "parent": 0,
+              "notused": 39,
+              "detail": "SEARCH catalogue_objects USING INDEX sqlite_autoindex_catalogue_objects_1 (id=?)"
+            }
+          ]
+        },
+        {
+          "sql": "SELECT o.id,o.kind,o.name,o.revision,o.ticket_count,o.family_id,o.summary FROM catalogue_route_pairs p JOIN catalogue_objects o ON o.id=p.destination_id WHERE p.route_id=? AND p.origin_id=? AND p.destination_id>? ORDER BY p.destination_id LIMIT ?",
+          "params": [
+            "route_0323eac3579a15710c651829b1413b1b543fc6f17a1868e79e03db02cd654c2d",
+            "point_3a65d58abfd7150d9fed3c05eabeec01cb504bab1a1833ab01b29c8aef922d58",
+            "",
+            51
+          ],
+          "plan": [
+            {
+              "id": 8,
+              "parent": 0,
+              "notused": 64,
+              "detail": "SEARCH p USING PRIMARY KEY (route_id=? AND origin_id=? AND destination_id>?)"
+            },
+            {
+              "id": 18,
+              "parent": 0,
+              "notused": 42,
+              "detail": "SEARCH o USING INDEX sqlite_autoindex_catalogue_objects_1 (id=?)"
+            }
+          ]
+        }
+      ],
+      "journey": [
+        {
+          "sql": "SELECT catalogue_version FROM dataset WHERE id=1",
+          "params": [],
+          "plan": [
+            {
+              "id": 2,
+              "parent": 0,
+              "notused": 33,
+              "detail": "SEARCH dataset USING INTEGER PRIMARY KEY (rowid=?)"
+            }
+          ]
+        },
+        {
+          "sql": "SELECT * FROM catalogue_objects WHERE id=? AND noc=?",
+          "params": [
+            "route_0323eac3579a15710c651829b1413b1b543fc6f17a1868e79e03db02cd654c2d",
+            "ANEA"
+          ],
+          "plan": [
+            {
+              "id": 3,
+              "parent": 0,
+              "notused": 39,
+              "detail": "SEARCH catalogue_objects USING INDEX sqlite_autoindex_catalogue_objects_1 (id=?)"
+            }
+          ]
+        },
+        {
+          "sql": "SELECT * FROM catalogue_objects WHERE id=? AND noc=?",
+          "params": [
+            "point_3a65d58abfd7150d9fed3c05eabeec01cb504bab1a1833ab01b29c8aef922d58",
+            "ANEA"
+          ],
+          "plan": [
+            {
+              "id": 3,
+              "parent": 0,
+              "notused": 39,
+              "detail": "SEARCH catalogue_objects USING INDEX sqlite_autoindex_catalogue_objects_1 (id=?)"
+            }
+          ]
+        },
+        {
+          "sql": "SELECT * FROM catalogue_objects WHERE id=? AND noc=?",
+          "params": [
+            "point_09e225ce5429d1cf6e94544ebd1311343dc0eee986f7c76aceb58225547e9a5d",
+            "ANEA"
+          ],
+          "plan": [
+            {
+              "id": 3,
+              "parent": 0,
+              "notused": 39,
+              "detail": "SEARCH catalogue_objects USING INDEX sqlite_autoindex_catalogue_objects_1 (id=?)"
+            }
+          ]
+        },
+        {
+          "sql": "SELECT o.id,o.kind,o.name,o.revision,o.ticket_count,o.family_id,o.summary,j.amount,j.currency,o.detail FROM catalogue_journeys j JOIN catalogue_objects o ON o.id=j.ticket_id WHERE j.route_id=? AND j.origin_id=? AND j.destination_id=? AND (j.ticket_id,j.amount,j.currency)>(?,?,?) ORDER BY j.ticket_id,j.amount,j.currency LIMIT ?",
+          "params": [
+            "route_0323eac3579a15710c651829b1413b1b543fc6f17a1868e79e03db02cd654c2d",
+            "point_3a65d58abfd7150d9fed3c05eabeec01cb504bab1a1833ab01b29c8aef922d58",
+            "point_09e225ce5429d1cf6e94544ebd1311343dc0eee986f7c76aceb58225547e9a5d",
+            "",
+            "",
+            "",
+            51
+          ],
+          "plan": [
+            {
+              "id": 8,
+              "parent": 0,
+              "notused": 48,
+              "detail": "SEARCH j USING COVERING INDEX catalogue_journeys_destination (route_id=? AND destination_id=? AND origin_id=? AND (ticket_id,amount,currency)>(?,?,?))"
+            },
+            {
+              "id": 37,
+              "parent": 0,
+              "notused": 42,
+              "detail": "SEARCH o USING INDEX sqlite_autoindex_catalogue_objects_1 (id=?)"
+            }
+          ]
+        }
+      ]
+    },
+    "latency": {
+      "areas": {
+        "cold_ms": 16.299094999999852,
+        "warm_p50_ms": 2.2735139999999774,
+        "warm_p95_ms": 7.182853999999679,
+        "uncached_p50_ms": 1.4285690000001523,
+        "uncached_p95_ms": 1.8077010000001792,
+        "response_bytes": 11907,
+        "repository_sql_statements": 2
+      },
+      "tickets": {
+        "cold_ms": 1.9965180000003784,
+        "warm_p50_ms": 2.5143019999995886,
+        "warm_p95_ms": 3.8033989999998994,
+        "uncached_p50_ms": 1.661485999999968,
+        "uncached_p95_ms": 2.019510000000082,
+        "response_bytes": 46547,
+        "repository_sql_statements": 2
+      },
+      "search": {
+        "cold_ms": 2.05533800000012,
+        "warm_p50_ms": 2.0344599999998536,
+        "warm_p95_ms": 4.005828999999721,
+        "uncached_p50_ms": 1.7054769999999735,
+        "uncached_p95_ms": 1.9835980000002564,
+        "response_bytes": 48206,
+        "repository_sql_statements": 2
+      },
+      "routes": {
+        "cold_ms": 1.3738839999996344,
+        "warm_p50_ms": 1.5502550000001065,
+        "warm_p95_ms": 3.3306510000002163,
+        "uncached_p50_ms": 1.0807840000002216,
+        "uncached_p95_ms": 1.8647679999999127,
+        "response_bytes": 10298,
+        "repository_sql_statements": 2
+      },
+      "area_families": {
+        "cold_ms": 1.7107390000001033,
+        "warm_p50_ms": 1.4268839999999727,
+        "warm_p95_ms": 4.803906999999981,
+        "uncached_p50_ms": 0.6755290000000969,
+        "uncached_p95_ms": 1.225687999999991,
+        "response_bytes": 3547,
+        "repository_sql_statements": 3
+      },
+      "area_tickets": {
+        "cold_ms": 1.301050000000032,
+        "warm_p50_ms": 1.0655750000000808,
+        "warm_p95_ms": 1.9202279999999519,
+        "uncached_p50_ms": 0.8054299999998875,
+        "uncached_p95_ms": 1.232158000000254,
+        "response_bytes": 12944,
+        "repository_sql_statements": 3
+      },
+      "stops": {
+        "cold_ms": 0.6968990000000304,
+        "warm_p50_ms": 0.8944870000000265,
+        "warm_p95_ms": 2.2874879999999393,
+        "uncached_p50_ms": 0.812836999999945,
+        "uncached_p95_ms": 1.1894949999996243,
+        "response_bytes": 1705,
+        "repository_sql_statements": 3
+      },
+      "detail": {
+        "cold_ms": 0.9350989999998092,
+        "warm_p50_ms": 0.9069800000002033,
+        "warm_p95_ms": 2.5569399999999405,
+        "uncached_p50_ms": 0.6327309999996942,
+        "uncached_p95_ms": 1.060179000000062,
+        "response_bytes": 8032,
+        "repository_sql_statements": 2
+      },
+      "origins": {
+        "cold_ms": 1.384136000000126,
+        "warm_p50_ms": 0.9849220000000969,
+        "warm_p95_ms": 3.9696610000000874,
+        "uncached_p50_ms": 0.8459020000000237,
+        "uncached_p95_ms": 1.0567919999998594,
+        "response_bytes": 10316,
+        "repository_sql_statements": 3
+      },
+      "destinations": {
+        "cold_ms": 0.9313529999999446,
+        "warm_p50_ms": 0.9098539999999957,
+        "warm_p95_ms": 2.6204710000001796,
+        "uncached_p50_ms": 0.7118749999999636,
+        "uncached_p95_ms": 1.0493599999999788,
+        "response_bytes": 4483,
+        "repository_sql_statements": 4
+      },
+      "journey": {
+        "cold_ms": 1.0648510000000897,
+        "warm_p50_ms": 0.9465760000002774,
+        "warm_p95_ms": 1.7458409999999276,
+        "uncached_p50_ms": 0.6559040000001914,
+        "uncached_p95_ms": 0.9491299999999683,
+        "response_bytes": 1116,
+        "repository_sql_statements": 5
+      }
+    },
+    "requests": {
+      "browse_to_detail": 3,
+      "grouped_browse_to_detail": 4,
+      "optional_first_stop_page": 1
+    },
+    "cold_definition": "First request to each scenario in one newly started API process; later scenarios reuse initialized workers; OS caches not cleared",
+    "api_peak_rss_kib": 330820
+  },
+  "reproduced_inputs": {
+    "source_member": "Arriva UK Bus_63/9936_129314_2026-11-03_16-02-31_current.zip",
+    "change": {
+      "path": "ANEA_10D6_Inbound_ADSGLREF_NoTicketValidityPeriod_639293154425281017.xml",
+      "before": "1.8",
+      "after": "1.81"
+    },
+    "removed": "ANEA_X76_Outbound_U22SGL_NoTicketValidityPeriod_639293166293840564.xml",
+    "files": {
+      "anea.zip": {
+        "bytes": 83839787,
+        "sha256": "545080a022db98c618dbb204d910cf1d262e45c83be757ec0c9c4bb308fbe24c"
+      },
+      "anea-price-update.zip": {
+        "bytes": 86357552,
+        "sha256": "758dde80cddfabad3ef68d046bf431a40220092b4f41123fc7fece5851d3bee2"
+      },
+      "anea-removal.zip": {
+        "bytes": 86221215,
+        "sha256": "ea27c4b5dc1f96e74a26c44d7a02f735001d5589d23b9b952411fb474015e6c4"
+      }
+    }
+  },
+  "checks": {
+    "repository_tests_passed": 67,
+    "existing_opt_in_tests_ignored": 1,
+    "types": "passed",
+    "compose": "passed",
+    "full_anea_integrity_and_foreign_keys": "passed",
+    "rust_format": "passed",
+    "changed_js_ts_format": "passed",
+    "git_diff_check": "passed"
+  },
+  "diagnostic_runs": {
+    "anea-final": {
+      "machine": "Linux-6.12.113+deb13-cloud-arm64-aarch64-with-glibc2.41",
+      "processor": "aarch64",
+      "feeds": [
+        {
+          "path": "/tmp/anea.zip",
+          "bytes": 83839787,
+          "sha256": "545080a022db98c618dbb204d910cf1d262e45c83be757ec0c9c4bb308fbe24c"
+        },
+        {
+          "path": "/tmp/anea-price-update.zip",
+          "bytes": 86357552,
+          "sha256": "758dde80cddfabad3ef68d046bf431a40220092b4f41123fc7fece5851d3bee2"
+        },
+        {
+          "path": "/tmp/anea-removal.zip",
+          "bytes": 86221215,
+          "sha256": "ea27c4b5dc1f96e74a26c44d7a02f735001d5589d23b9b952411fb474015e6c4"
+        },
+        {
+          "path": "/tmp/anea.zip",
+          "bytes": 83839787,
+          "sha256": "545080a022db98c618dbb204d910cf1d262e45c83be757ec0c9c4bb308fbe24c"
+        }
+      ],
+      "runs": [
+        {
+          "command": [
+            "/home/seansean297/buslane/apps/fares/target/release/fares",
+            "--db",
+            "/mnt/ssd/buslane-catalogue/anea-final/fares.sqlite",
+            "--source",
+            "/tmp/anea.zip",
+            "--scratch",
+            "/mnt/ssd/buslane-catalogue/anea-final/scratch"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 387.1170120910001,
+          "user_seconds": 326.831041,
+          "system_seconds": 41.163599,
+          "peak_rss_kib": 187332,
+          "block_inputs": 0,
+          "block_outputs": 21997888,
+          "peak_wal_bytes": 3608003512,
+          "import": {
+            "peak_memory": "VmHWM:\t  187332 kB",
+            "report": {
+              "archives_skipped": 0,
+              "documents_deleted": 0,
+              "documents_inserted": 5761,
+              "documents_skipped": 0,
+              "documents_updated": 0,
+              "elapsed_ms": 383548,
+              "entities_deleted": 0,
+              "entities_inserted": 1441080,
+              "entities_unchanged": 0,
+              "entities_updated": 0,
+              "generation": 1,
+              "projection_ms": 298166,
+              "sqlite_changes": 6141703
+            },
+            "wal_bytes_before_checkpoint": 3608003512
+          },
+          "name": "initial",
+          "database_bytes": 3587002368,
+          "wal_bytes": 0
+        },
+        {
+          "command": [
+            "/home/seansean297/buslane/apps/fares/target/release/fares",
+            "--db",
+            "/mnt/ssd/buslane-catalogue/anea-final/fares.sqlite",
+            "--source",
+            "/tmp/anea.zip",
+            "--scratch",
+            "/mnt/ssd/buslane-catalogue/anea-final/scratch"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.06381501099986053,
+          "user_seconds": 0.055334999999999995,
+          "system_seconds": 0.007904999999999999,
+          "peak_rss_kib": 11596,
+          "block_inputs": 0,
+          "block_outputs": 64,
+          "peak_wal_bytes": 0,
+          "import": {
+            "peak_memory": "VmHWM:\t    5724 kB",
+            "report": {
+              "archives_skipped": 1,
+              "documents_deleted": 0,
+              "documents_inserted": 0,
+              "documents_skipped": 5761,
+              "documents_updated": 0,
+              "elapsed_ms": 58,
+              "entities_deleted": 0,
+              "entities_inserted": 0,
+              "entities_unchanged": 0,
+              "entities_updated": 0,
+              "generation": 1,
+              "projection_ms": 0,
+              "sqlite_changes": 0
+            },
+            "wal_bytes_before_checkpoint": 0
+          },
+          "name": "identical",
+          "database_bytes": 3587002368,
+          "wal_bytes": 0
+        },
+        {
+          "command": [
+            "/home/seansean297/buslane/apps/fares/target/release/fares",
+            "--db",
+            "/mnt/ssd/buslane-catalogue/anea-final/fares.sqlite",
+            "--source",
+            "/tmp/anea-price-update.zip",
+            "--scratch",
+            "/mnt/ssd/buslane-catalogue/anea-final/scratch"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 3.1076936980002756,
+          "user_seconds": 2.941373,
+          "system_seconds": 0.164076,
+          "peak_rss_kib": 147748,
+          "block_inputs": 0,
+          "block_outputs": 9248,
+          "peak_wal_bytes": 1849912,
+          "import": {
+            "peak_memory": "VmHWM:\t  147748 kB",
+            "report": {
+              "archives_skipped": 0,
+              "documents_deleted": 0,
+              "documents_inserted": 0,
+              "documents_skipped": 5760,
+              "documents_updated": 1,
+              "elapsed_ms": 3081,
+              "entities_deleted": 0,
+              "entities_inserted": 0,
+              "entities_unchanged": 6467,
+              "entities_updated": 2,
+              "generation": 2,
+              "projection_ms": 1526,
+              "sqlite_changes": 313
+            },
+            "wal_bytes_before_checkpoint": 1849912
+          },
+          "name": "update-1",
+          "database_bytes": 3587186688,
+          "wal_bytes": 0
+        },
+        {
+          "command": [
+            "/home/seansean297/buslane/apps/fares/target/release/fares",
+            "--db",
+            "/mnt/ssd/buslane-catalogue/anea-final/fares.sqlite",
+            "--source",
+            "/tmp/anea-removal.zip",
+            "--scratch",
+            "/mnt/ssd/buslane-catalogue/anea-final/scratch"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 91.57912181200027,
+          "user_seconds": 79.764731,
+          "system_seconds": 11.803516,
+          "peak_rss_kib": 145660,
+          "block_inputs": 0,
+          "block_outputs": 13720,
+          "peak_wal_bytes": 3477312,
+          "import": {
+            "peak_memory": "VmHWM:\t  145660 kB",
+            "report": {
+              "archives_skipped": 0,
+              "documents_deleted": 1,
+              "documents_inserted": 0,
+              "documents_skipped": 5760,
+              "documents_updated": 0,
+              "elapsed_ms": 91545,
+              "entities_deleted": 725,
+              "entities_inserted": 0,
+              "entities_unchanged": 0,
+              "entities_updated": 0,
+              "generation": 3,
+              "projection_ms": 90114,
+              "sqlite_changes": 1659
+            },
+            "wal_bytes_before_checkpoint": 3477312
+          },
+          "name": "update-2",
+          "database_bytes": 3587186688,
+          "wal_bytes": 0
+        },
+        {
+          "command": [
+            "/home/seansean297/buslane/apps/fares/target/release/fares",
+            "--db",
+            "/mnt/ssd/buslane-catalogue/anea-final/fares.sqlite",
+            "--source",
+            "/tmp/anea.zip",
+            "--scratch",
+            "/mnt/ssd/buslane-catalogue/anea-final/scratch"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 93.87046577000001,
+          "user_seconds": 81.662495,
+          "system_seconds": 12.184372,
+          "peak_rss_kib": 147368,
+          "block_inputs": 0,
+          "block_outputs": 24976,
+          "peak_wal_bytes": 5372512,
+          "import": {
+            "peak_memory": "VmHWM:\t  147368 kB",
+            "report": {
+              "archives_skipped": 0,
+              "documents_deleted": 0,
+              "documents_inserted": 1,
+              "documents_skipped": 5759,
+              "documents_updated": 1,
+              "elapsed_ms": 93842,
+              "entities_deleted": 0,
+              "entities_inserted": 725,
+              "entities_unchanged": 6467,
+              "entities_updated": 2,
+              "generation": 4,
+              "projection_ms": 92271,
+              "sqlite_changes": 1969
+            },
+            "wal_bytes_before_checkpoint": 5372512
+          },
+          "name": "update-3",
+          "database_bytes": 3587186688,
+          "wal_bytes": 0
+        }
+      ]
+    },
+    "anea-optimized": {
+      "machine": "Linux-6.12.113+deb13-cloud-arm64-aarch64-with-glibc2.41",
+      "processor": "aarch64",
+      "feeds": [
+        {
+          "path": "/tmp/anea.zip",
+          "bytes": 83839787,
+          "sha256": "545080a022db98c618dbb204d910cf1d262e45c83be757ec0c9c4bb308fbe24c"
+        },
+        {
+          "path": "/tmp/anea-price-update.zip",
+          "bytes": 86357552,
+          "sha256": "758dde80cddfabad3ef68d046bf431a40220092b4f41123fc7fece5851d3bee2"
+        },
+        {
+          "path": "/tmp/anea-removal.zip",
+          "bytes": 86221215,
+          "sha256": "ea27c4b5dc1f96e74a26c44d7a02f735001d5589d23b9b952411fb474015e6c4"
+        },
+        {
+          "path": "/tmp/anea.zip",
+          "bytes": 83839787,
+          "sha256": "545080a022db98c618dbb204d910cf1d262e45c83be757ec0c9c4bb308fbe24c"
+        }
+      ],
+      "runs": [
+        {
+          "command": [
+            "/home/seansean297/buslane/apps/fares/target/release/fares",
+            "--db",
+            "/mnt/ssd/buslane-catalogue/anea-optimized/fares.sqlite",
+            "--source",
+            "/tmp/anea.zip",
+            "--scratch",
+            "/mnt/ssd/buslane-catalogue/anea-optimized/scratch"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 145.20048932700047,
+          "user_seconds": 90.443745,
+          "system_seconds": 11.943651,
+          "peak_rss_kib": 186080,
+          "block_inputs": 7166608,
+          "block_outputs": 21605024,
+          "peak_wal_bytes": 3613347152,
+          "import": {
+            "peak_memory": "VmHWM:\t  186080 kB",
+            "report": {
+              "archives_skipped": 0,
+              "documents_deleted": 0,
+              "documents_inserted": 5761,
+              "documents_skipped": 0,
+              "documents_updated": 0,
+              "elapsed_ms": 133672,
+              "entities_deleted": 0,
+              "entities_inserted": 1441080,
+              "entities_unchanged": 0,
+              "entities_updated": 0,
+              "generation": 1,
+              "projection_ms": 31521,
+              "sqlite_changes": 6149249
+            },
+            "wal_bytes_before_checkpoint": 3613347152
+          },
+          "name": "initial",
+          "database_bytes": 3592331264,
+          "wal_bytes": 0
+        },
+        {
+          "command": [
+            "/home/seansean297/buslane/apps/fares/target/release/fares",
+            "--db",
+            "/mnt/ssd/buslane-catalogue/anea-optimized/fares.sqlite",
+            "--source",
+            "/tmp/anea.zip",
+            "--scratch",
+            "/mnt/ssd/buslane-catalogue/anea-optimized/scratch"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.07004385799973534,
+          "user_seconds": 0.059781999999999995,
+          "system_seconds": 0.0042699999999999995,
+          "peak_rss_kib": 11556,
+          "block_inputs": 176,
+          "block_outputs": 64,
+          "peak_wal_bytes": 0,
+          "import": {
+            "peak_memory": "VmHWM:\t    5804 kB",
+            "report": {
+              "archives_skipped": 1,
+              "documents_deleted": 0,
+              "documents_inserted": 0,
+              "documents_skipped": 5761,
+              "documents_updated": 0,
+              "elapsed_ms": 62,
+              "entities_deleted": 0,
+              "entities_inserted": 0,
+              "entities_unchanged": 0,
+              "entities_updated": 0,
+              "generation": 1,
+              "projection_ms": 0,
+              "sqlite_changes": 0
+            },
+            "wal_bytes_before_checkpoint": 0
+          },
+          "name": "identical",
+          "database_bytes": 3592331264,
+          "wal_bytes": 0
+        },
+        {
+          "command": [
+            "/home/seansean297/buslane/apps/fares/target/release/fares",
+            "--db",
+            "/mnt/ssd/buslane-catalogue/anea-optimized/fares.sqlite",
+            "--source",
+            "/tmp/anea-price-update.zip",
+            "--scratch",
+            "/mnt/ssd/buslane-catalogue/anea-optimized/scratch"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 3.2353294450003887,
+          "user_seconds": 2.810241,
+          "system_seconds": 0.111929,
+          "peak_rss_kib": 58552,
+          "block_inputs": 38152,
+          "block_outputs": 9248,
+          "peak_wal_bytes": 1849912,
+          "import": {
+            "peak_memory": "VmHWM:\t   58552 kB",
+            "report": {
+              "archives_skipped": 0,
+              "documents_deleted": 0,
+              "documents_inserted": 0,
+              "documents_skipped": 5760,
+              "documents_updated": 1,
+              "elapsed_ms": 3183,
+              "entities_deleted": 0,
+              "entities_inserted": 0,
+              "entities_unchanged": 6467,
+              "entities_updated": 2,
+              "generation": 2,
+              "projection_ms": 1359,
+              "sqlite_changes": 313
+            },
+            "wal_bytes_before_checkpoint": 1849912
+          },
+          "name": "update-1",
+          "database_bytes": 3592515584,
+          "wal_bytes": 0
+        },
+        {
+          "command": [
+            "/home/seansean297/buslane/apps/fares/target/release/fares",
+            "--db",
+            "/mnt/ssd/buslane-catalogue/anea-optimized/fares.sqlite",
+            "--source",
+            "/tmp/anea-removal.zip",
+            "--scratch",
+            "/mnt/ssd/buslane-catalogue/anea-optimized/scratch"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 63.021464557999934,
+          "user_seconds": 61.449107,
+          "system_seconds": 0.287593,
+          "peak_rss_kib": 146800,
+          "block_inputs": 1008,
+          "block_outputs": 13752,
+          "peak_wal_bytes": 3477312,
+          "import": {
+            "peak_memory": "VmHWM:\t  146800 kB",
+            "report": {
+              "archives_skipped": 0,
+              "documents_deleted": 1,
+              "documents_inserted": 0,
+              "documents_skipped": 5760,
+              "documents_updated": 0,
+              "elapsed_ms": 62986,
+              "entities_deleted": 725,
+              "entities_inserted": 0,
+              "entities_unchanged": 0,
+              "entities_updated": 0,
+              "generation": 3,
+              "projection_ms": 61478,
+              "sqlite_changes": 1659
+            },
+            "wal_bytes_before_checkpoint": 3477312
+          },
+          "name": "update-2",
+          "database_bytes": 3592515584,
+          "wal_bytes": 0
+        },
+        {
+          "command": [
+            "/home/seansean297/buslane/apps/fares/target/release/fares",
+            "--db",
+            "/mnt/ssd/buslane-catalogue/anea-optimized/fares.sqlite",
+            "--source",
+            "/tmp/anea.zip",
+            "--scratch",
+            "/mnt/ssd/buslane-catalogue/anea-optimized/scratch"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 64.04330477999974,
+          "user_seconds": 63.604618,
+          "system_seconds": 0.299965,
+          "peak_rss_kib": 148776,
+          "block_inputs": 0,
+          "block_outputs": 24992,
+          "peak_wal_bytes": 5372512,
+          "import": {
+            "peak_memory": "VmHWM:\t  148776 kB",
+            "report": {
+              "archives_skipped": 0,
+              "documents_deleted": 0,
+              "documents_inserted": 1,
+              "documents_skipped": 5759,
+              "documents_updated": 1,
+              "elapsed_ms": 64017,
+              "entities_deleted": 0,
+              "entities_inserted": 725,
+              "entities_unchanged": 6467,
+              "entities_updated": 2,
+              "generation": 4,
+              "projection_ms": 62445,
+              "sqlite_changes": 1969
+            },
+            "wal_bytes_before_checkpoint": 5372512
+          },
+          "name": "update-3",
+          "database_bytes": 3592515584,
+          "wal_bytes": 0
+        }
+      ]
+    },
+    "anea-verified": {
+      "machine": "Linux-6.12.113+deb13-cloud-arm64-aarch64-with-glibc2.41",
+      "processor": "aarch64",
+      "feeds": [
+        {
+          "path": "/tmp/anea.zip",
+          "bytes": 83839787,
+          "sha256": "545080a022db98c618dbb204d910cf1d262e45c83be757ec0c9c4bb308fbe24c"
+        },
+        {
+          "path": "/tmp/anea-price-update.zip",
+          "bytes": 86357552,
+          "sha256": "758dde80cddfabad3ef68d046bf431a40220092b4f41123fc7fece5851d3bee2"
+        },
+        {
+          "path": "/tmp/anea-removal.zip",
+          "bytes": 86221215,
+          "sha256": "ea27c4b5dc1f96e74a26c44d7a02f735001d5589d23b9b952411fb474015e6c4"
+        },
+        {
+          "path": "/tmp/anea.zip",
+          "bytes": 83839787,
+          "sha256": "545080a022db98c618dbb204d910cf1d262e45c83be757ec0c9c4bb308fbe24c"
+        }
+      ],
+      "runs": [
+        {
+          "command": [
+            "/home/seansean297/buslane/apps/fares/target/release/fares",
+            "--db",
+            "/mnt/ssd/buslane-catalogue/anea-verified/fares.sqlite",
+            "--source",
+            "/tmp/anea.zip",
+            "--scratch",
+            "/mnt/ssd/buslane-catalogue/anea-verified/scratch"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 121.40322449999985,
+          "user_seconds": 88.260718,
+          "system_seconds": 10.272942,
+          "peak_rss_kib": 185916,
+          "block_inputs": 720,
+          "block_outputs": 21407792,
+          "peak_wal_bytes": 3613347152,
+          "import": {
+            "peak_memory": "VmHWM:\t  185916 kB",
+            "report": {
+              "archives_skipped": 0,
+              "documents_deleted": 0,
+              "documents_inserted": 5761,
+              "documents_skipped": 0,
+              "documents_updated": 0,
+              "elapsed_ms": 117898,
+              "entities_deleted": 0,
+              "entities_inserted": 1441080,
+              "entities_unchanged": 0,
+              "entities_updated": 0,
+              "generation": 1,
+              "projection_ms": 28655,
+              "sqlite_changes": 6149249
+            },
+            "wal_bytes_before_checkpoint": 3613347152
+          },
+          "name": "initial",
+          "database_bytes": 3592331264,
+          "wal_bytes": 0
+        },
+        {
+          "command": [
+            "/home/seansean297/buslane/apps/fares/target/release/fares",
+            "--db",
+            "/mnt/ssd/buslane-catalogue/anea-verified/fares.sqlite",
+            "--source",
+            "/tmp/anea.zip",
+            "--scratch",
+            "/mnt/ssd/buslane-catalogue/anea-verified/scratch"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.06591372000002593,
+          "user_seconds": 0.055922,
+          "system_seconds": 0.007456,
+          "peak_rss_kib": 11568,
+          "block_inputs": 688,
+          "block_outputs": 64,
+          "peak_wal_bytes": 0,
+          "import": {
+            "peak_memory": "VmHWM:\t    5572 kB",
+            "report": {
+              "archives_skipped": 1,
+              "documents_deleted": 0,
+              "documents_inserted": 0,
+              "documents_skipped": 5761,
+              "documents_updated": 0,
+              "elapsed_ms": 58,
+              "entities_deleted": 0,
+              "entities_inserted": 0,
+              "entities_unchanged": 0,
+              "entities_updated": 0,
+              "generation": 1,
+              "projection_ms": 0,
+              "sqlite_changes": 0
+            },
+            "wal_bytes_before_checkpoint": 0
+          },
+          "name": "identical",
+          "database_bytes": 3592331264,
+          "wal_bytes": 0
+        },
+        {
+          "command": [
+            "/home/seansean297/buslane/apps/fares/target/release/fares",
+            "--db",
+            "/mnt/ssd/buslane-catalogue/anea-verified/fares.sqlite",
+            "--source",
+            "/tmp/anea-price-update.zip",
+            "--scratch",
+            "/mnt/ssd/buslane-catalogue/anea-verified/scratch"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 2.8632549619997008,
+          "user_seconds": 2.775639,
+          "system_seconds": 0.083868,
+          "peak_rss_kib": 58848,
+          "block_inputs": 56,
+          "block_outputs": 9248,
+          "peak_wal_bytes": 1849912,
+          "import": {
+            "peak_memory": "VmHWM:\t   58848 kB",
+            "report": {
+              "archives_skipped": 0,
+              "documents_deleted": 0,
+              "documents_inserted": 0,
+              "documents_skipped": 5760,
+              "documents_updated": 1,
+              "elapsed_ms": 2847,
+              "entities_deleted": 0,
+              "entities_inserted": 0,
+              "entities_unchanged": 6467,
+              "entities_updated": 2,
+              "generation": 2,
+              "projection_ms": 1296,
+              "sqlite_changes": 313
+            },
+            "wal_bytes_before_checkpoint": 1849912
+          },
+          "name": "update-1",
+          "database_bytes": 3592515584,
+          "wal_bytes": 0
+        },
+        {
+          "command": [
+            "/home/seansean297/buslane/apps/fares/target/release/fares",
+            "--db",
+            "/mnt/ssd/buslane-catalogue/anea-verified/fares.sqlite",
+            "--source",
+            "/tmp/anea-removal.zip",
+            "--scratch",
+            "/mnt/ssd/buslane-catalogue/anea-verified/scratch"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 30.24648384699958,
+          "user_seconds": 29.590032,
+          "system_seconds": 0.08798199999999999,
+          "peak_rss_kib": 42268,
+          "block_inputs": 0,
+          "block_outputs": 13752,
+          "peak_wal_bytes": 3477312,
+          "import": {
+            "peak_memory": "VmHWM:\t   42268 kB",
+            "report": {
+              "archives_skipped": 0,
+              "documents_deleted": 1,
+              "documents_inserted": 0,
+              "documents_skipped": 5760,
+              "documents_updated": 0,
+              "elapsed_ms": 30225,
+              "entities_deleted": 725,
+              "entities_inserted": 0,
+              "entities_unchanged": 0,
+              "entities_updated": 0,
+              "generation": 3,
+              "projection_ms": 28790,
+              "sqlite_changes": 1659
+            },
+            "wal_bytes_before_checkpoint": 3477312
+          },
+          "name": "update-2",
+          "database_bytes": 3592515584,
+          "wal_bytes": 0
+        },
+        {
+          "command": [
+            "/home/seansean297/buslane/apps/fares/target/release/fares",
+            "--db",
+            "/mnt/ssd/buslane-catalogue/anea-verified/fares.sqlite",
+            "--source",
+            "/tmp/anea.zip",
+            "--scratch",
+            "/mnt/ssd/buslane-catalogue/anea-verified/scratch"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 32.05195973900027,
+          "user_seconds": 31.947327,
+          "system_seconds": 0.083977,
+          "peak_rss_kib": 71828,
+          "block_inputs": 0,
+          "block_outputs": 23104,
+          "peak_wal_bytes": 5376632,
+          "import": {
+            "peak_memory": "VmHWM:\t   71828 kB",
+            "report": {
+              "archives_skipped": 0,
+              "documents_deleted": 0,
+              "documents_inserted": 1,
+              "documents_skipped": 5759,
+              "documents_updated": 1,
+              "elapsed_ms": 32036,
+              "entities_deleted": 0,
+              "entities_inserted": 725,
+              "entities_unchanged": 6467,
+              "entities_updated": 2,
+              "generation": 4,
+              "projection_ms": 30475,
+              "sqlite_changes": 1969
+            },
+            "wal_bytes_before_checkpoint": 5376632
+          },
+          "name": "update-3",
+          "database_bytes": 3592515584,
+          "wal_bytes": 0
+        }
+      ]
+    },
+    "anea-release": {
+      "machine": "Linux-6.12.113+deb13-cloud-arm64-aarch64-with-glibc2.41",
+      "processor": "aarch64",
+      "feeds": [
+        {
+          "path": "/tmp/anea.zip",
+          "bytes": 83839787,
+          "sha256": "545080a022db98c618dbb204d910cf1d262e45c83be757ec0c9c4bb308fbe24c"
+        },
+        {
+          "path": "/tmp/anea-price-update.zip",
+          "bytes": 86357552,
+          "sha256": "758dde80cddfabad3ef68d046bf431a40220092b4f41123fc7fece5851d3bee2"
+        },
+        {
+          "path": "/tmp/anea-removal.zip",
+          "bytes": 86221215,
+          "sha256": "ea27c4b5dc1f96e74a26c44d7a02f735001d5589d23b9b952411fb474015e6c4"
+        },
+        {
+          "path": "/tmp/anea.zip",
+          "bytes": 83839787,
+          "sha256": "545080a022db98c618dbb204d910cf1d262e45c83be757ec0c9c4bb308fbe24c"
+        }
+      ],
+      "runs": [
+        {
+          "command": [
+            "/home/seansean297/buslane/apps/fares/target/release/fares",
+            "--db",
+            "/mnt/ssd/buslane-catalogue/anea-release/fares.sqlite",
+            "--source",
+            "/tmp/anea.zip",
+            "--scratch",
+            "/mnt/ssd/buslane-catalogue/anea-release/scratch"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 124.74247445699984,
+          "user_seconds": 90.218487,
+          "system_seconds": 10.453527,
+          "peak_rss_kib": 187908,
+          "block_inputs": 3203344,
+          "block_outputs": 21622584,
+          "peak_wal_bytes": 3613186472,
+          "import": {
+            "peak_memory": "VmHWM:\t  187908 kB",
+            "report": {
+              "archives_skipped": 0,
+              "documents_deleted": 0,
+              "documents_inserted": 5761,
+              "documents_skipped": 0,
+              "documents_updated": 0,
+              "elapsed_ms": 121238,
+              "entities_deleted": 0,
+              "entities_inserted": 1441080,
+              "entities_unchanged": 0,
+              "entities_updated": 0,
+              "generation": 1,
+              "projection_ms": 29897,
+              "sqlite_changes": 6149249
+            },
+            "wal_bytes_before_checkpoint": 3613186472
+          },
+          "name": "initial",
+          "database_bytes": 3592171520,
+          "wal_bytes": 0
+        },
+        {
+          "command": [
+            "/home/seansean297/buslane/apps/fares/target/release/fares",
+            "--db",
+            "/mnt/ssd/buslane-catalogue/anea-release/fares.sqlite",
+            "--source",
+            "/tmp/anea.zip",
+            "--scratch",
+            "/mnt/ssd/buslane-catalogue/anea-release/scratch"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.06686880300003395,
+          "user_seconds": 0.049152999999999995,
+          "system_seconds": 0.015123999999999999,
+          "peak_rss_kib": 11560,
+          "block_inputs": 192,
+          "block_outputs": 64,
+          "peak_wal_bytes": 0,
+          "import": {
+            "peak_memory": "VmHWM:\t    5696 kB",
+            "report": {
+              "archives_skipped": 1,
+              "documents_deleted": 0,
+              "documents_inserted": 0,
+              "documents_skipped": 5761,
+              "documents_updated": 0,
+              "elapsed_ms": 58,
+              "entities_deleted": 0,
+              "entities_inserted": 0,
+              "entities_unchanged": 0,
+              "entities_updated": 0,
+              "generation": 1,
+              "projection_ms": 0,
+              "sqlite_changes": 0
+            },
+            "wal_bytes_before_checkpoint": 0
+          },
+          "name": "identical",
+          "database_bytes": 3592171520,
+          "wal_bytes": 0
+        },
+        {
+          "command": [
+            "/home/seansean297/buslane/apps/fares/target/release/fares",
+            "--db",
+            "/mnt/ssd/buslane-catalogue/anea-release/fares.sqlite",
+            "--source",
+            "/tmp/anea-price-update.zip",
+            "--scratch",
+            "/mnt/ssd/buslane-catalogue/anea-release/scratch"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 1.6916205380002793,
+          "user_seconds": 1.580451,
+          "system_seconds": 0.10775799999999999,
+          "peak_rss_kib": 59000,
+          "block_inputs": 56,
+          "block_outputs": 9200,
+          "peak_wal_bytes": 1837552,
+          "import": {
+            "peak_memory": "VmHWM:\t   59000 kB",
+            "report": {
+              "archives_skipped": 0,
+              "documents_deleted": 0,
+              "documents_inserted": 0,
+              "documents_skipped": 5760,
+              "documents_updated": 1,
+              "elapsed_ms": 1676,
+              "entities_deleted": 0,
+              "entities_inserted": 0,
+              "entities_unchanged": 6467,
+              "entities_updated": 2,
+              "generation": 2,
+              "projection_ms": 118,
+              "sqlite_changes": 313
+            },
+            "wal_bytes_before_checkpoint": 1837552
+          },
+          "name": "update-1",
+          "database_bytes": 3592355840,
+          "wal_bytes": 0
+        },
+        {
+          "command": [
+            "/home/seansean297/buslane/apps/fares/target/release/fares",
+            "--db",
+            "/mnt/ssd/buslane-catalogue/anea-release/fares.sqlite",
+            "--source",
+            "/tmp/anea-removal.zip",
+            "--scratch",
+            "/mnt/ssd/buslane-catalogue/anea-release/scratch"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 1.5048773460002849,
+          "user_seconds": 1.3949289999999999,
+          "system_seconds": 0.07971,
+          "peak_rss_kib": 36456,
+          "block_inputs": 0,
+          "block_outputs": 13704,
+          "peak_wal_bytes": 3481432,
+          "import": {
+            "peak_memory": "VmHWM:\t   36456 kB",
+            "report": {
+              "archives_skipped": 0,
+              "documents_deleted": 1,
+              "documents_inserted": 0,
+              "documents_skipped": 5760,
+              "documents_updated": 0,
+              "elapsed_ms": 1485,
+              "entities_deleted": 725,
+              "entities_inserted": 0,
+              "entities_unchanged": 0,
+              "entities_updated": 0,
+              "generation": 3,
+              "projection_ms": 27,
+              "sqlite_changes": 1659
+            },
+            "wal_bytes_before_checkpoint": 3481432
+          },
+          "name": "update-2",
+          "database_bytes": 3592355840,
+          "wal_bytes": 0
+        },
+        {
+          "command": [
+            "/home/seansean297/buslane/apps/fares/target/release/fares",
+            "--db",
+            "/mnt/ssd/buslane-catalogue/anea-release/fares.sqlite",
+            "--source",
+            "/tmp/anea.zip",
+            "--scratch",
+            "/mnt/ssd/buslane-catalogue/anea-release/scratch"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 1.7333150109998314,
+          "user_seconds": 1.620473,
+          "system_seconds": 0.09179999999999999,
+          "peak_rss_kib": 65716,
+          "block_inputs": 0,
+          "block_outputs": 23072,
+          "peak_wal_bytes": 5372512,
+          "import": {
+            "peak_memory": "VmHWM:\t   65716 kB",
+            "report": {
+              "archives_skipped": 0,
+              "documents_deleted": 0,
+              "documents_inserted": 1,
+              "documents_skipped": 5759,
+              "documents_updated": 1,
+              "elapsed_ms": 1719,
+              "entities_deleted": 0,
+              "entities_inserted": 725,
+              "entities_unchanged": 6467,
+              "entities_updated": 2,
+              "generation": 4,
+              "projection_ms": 152,
+              "sqlite_changes": 1969
+            },
+            "wal_bytes_before_checkpoint": 5372512
+          },
+          "name": "update-3",
+          "database_bytes": 3592355840,
+          "wal_bytes": 0
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "Not a national projection benchmark",
+    "No Raspberry Pi verification",
+    "No OS-cache-cold test",
+    "One sample per import operation",
+    "Import overlapped repository/container checks",
+    "HTTP is local loopback; no deployed bus.rip browser measurements",
+    "Published journey candidates have unevaluated conditions"
+  ],
+  "implementation_sha256": {
+    "apps/fares/src/catalogue.rs": "c937d506946027f254821bfd69410786481b3b3f41119e5bb422b5bcc5ec5c27",
+    "apps/fares/src/import.rs": "e862532603f0dd84cdb8aec309bfd7068a5170292b7ab13ed0e2477eb177c6b4",
+    "apps/fares/src/netex.rs": "9e4a5385ec3e494f24c776f9963bcd91f00ff2080cefef8eb00d083d2048c27a",
+    "apps/fares/src/db.rs": "139912fb656e37fc5774a1214263da0224db3de303d518dc1848f7cd4c1fa81f",
+    "packages/fares-db/migrations/002.sql": "902ce521fe73005f5610d0bd544d735d160274e65e3607f6055aecf00e8ea629",
+    "apps/api/db/fares/catalogue.ts": "eca68fa5958e563736f453484dd35accd5a42ade8bbd5d8a89c6aaa6937effc0",
+    "apps/api/db/fares/repository.ts": "31c90b44a160f929ccf1a392352ca23fb0d7f953ca6ee406c4a5040455cdf3c6",
+    "apps/api/utils/fares.ts": "9a8eda9cf46fd074af0f27cdf324a5b0bb788910319f7d7c77fe07bef323b946",
+    "apps/api/server/api/fares/operators/[noc]/[...path].get.ts": "3b5471f954b55247858dfbc93e5cad875921348b0c5d4d3f9929171ee6d5caaa",
+    "scripts/benchmark-fares-catalogue.mjs": "f3b2e81f44d6cf2ba23db55b227a2d01df8068c018269c34a16ca0bae60e94a1",
+    "scripts/prepare-fares-catalogue-benchmark.py": "76d5ae18139aebfe9158bb18b359adc94ab00c5abb46790a722aed4648eb5096",
+    "apps/fares/target/release/fares": "34b39291733a63297851edd369072b1e98d2bbb414131dc398e89322114a7a8e",
+    "apps/api/.output/server/fares-worker.mjs": "d1521715c051d6c3a00cc79e196966bf340e99dff968c4baee0065d62da61435"
+  }
+}

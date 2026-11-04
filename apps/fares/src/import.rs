@@ -1,4 +1,4 @@
-use crate::{db, netex, source};
+use crate::{catalogue, db, netex, source};
 use anyhow::{Context, Result, ensure};
 use flate2::{Compression, write::DeflateEncoder};
 use rusqlite::{Connection, OptionalExtension, params};
@@ -31,6 +31,7 @@ pub struct Report {
     pub sqlite_changes: u64,
     pub generation: i64,
     pub elapsed_ms: u128,
+    pub projection_ms: u128,
 }
 struct Previous {
     id: i64,
@@ -52,6 +53,7 @@ struct Importer<'a> {
     expanded: u64,
     entries: u64,
     force: bool,
+    catalogue_only: bool,
     root_hash: Option<String>,
 }
 
@@ -94,11 +96,18 @@ pub fn import(
         [],
         |r| r.get(0),
     )?;
+    let catalogue_version: i64 = tx.query_row(
+        "SELECT catalogue_version FROM dataset WHERE id=1",
+        [],
+        |r| r.get(0),
+    )?;
+    catalogue::begin(&tx)?;
     let generation: i64 = tx.query_row("SELECT generation FROM dataset WHERE id=1", [], |r| {
         r.get(0)
     })?;
     let mut root_hash = None;
     if version == db::NORMALISATION_VERSION
+        && catalogue_version == catalogue::VERSION
         && generation > 0
         && path.is_file()
         && !path
@@ -150,7 +159,9 @@ pub fn import(
         report: Report::default(),
         expanded: 0,
         entries: 0,
-        force: version != db::NORMALISATION_VERSION,
+        force: version != db::NORMALISATION_VERSION || catalogue_version != catalogue::VERSION,
+        catalogue_only: version == db::NORMALISATION_VERSION
+            && catalogue_version != catalogue::VERSION,
         root_hash,
     };
     {
@@ -227,6 +238,7 @@ pub fn import(
                 [old.id],
                 |r| r.get::<_, i64>(0),
             )? as u64;
+            catalogue::forget(&tx, old.id)?;
             tx.execute("DELETE FROM documents WHERE id=?", [old.id])?;
             importer.report.documents_deleted += 1;
         }
@@ -241,6 +253,9 @@ pub fn import(
         + importer.report.documents_deleted
         > 0;
     if changed || importer.force {
+        let projection_started = Instant::now();
+        catalogue::publish(&tx, generation + 1)?;
+        importer.report.projection_ms += projection_started.elapsed().as_millis();
         tx.execute("UPDATE dataset SET generation=generation+1,imported_at=CURRENT_TIMESTAMP,normalisation_version=? WHERE id=1",[db::NORMALISATION_VERSION])?;
     }
     source::check_disk(database_dir, minimum)?;
@@ -483,6 +498,19 @@ impl Importer<'_> {
         }
         self.space()?;
         let parsed = netex::parse(bytes)?;
+        if self.catalogue_only
+            && let Some(old) = self.documents.get(path)
+            && old.hash == digest
+        {
+            self.report.projection_ms += parsed.catalogue.elapsed_ms;
+            let started = Instant::now();
+            catalogue::store(self.conn, old.id, path, parsed.catalogue)?;
+            self.report.projection_ms += started.elapsed().as_millis();
+            self.seen_documents.insert(old.id);
+            self.report.documents_skipped += 1;
+            return Ok(());
+        }
+
         let mut encoder = DeflateEncoder::new(Vec::new(), Compression::fast());
         encoder.write_all(bytes)?;
         let compressed = encoder.finish()?;
@@ -510,6 +538,10 @@ impl Importer<'_> {
                 old.insert(key, value);
             }
         }
+        self.report.projection_ms += parsed.catalogue.elapsed_ms;
+        let projection_started = Instant::now();
+        catalogue::store(self.conn, id, path, parsed.catalogue)?;
+        self.report.projection_ms += projection_started.elapsed().as_millis();
         for entity in parsed.entities {
             let sha = hash(&serde_json::to_vec(&entity)?);
             let previous = old.remove(&entity.identity);
