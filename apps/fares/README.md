@@ -21,7 +21,7 @@ Limits are eight nested ZIP levels, 64 MiB per XML, 8 GiB per nested ZIP, one mi
 
 ## Storage and pricing meaning
 
-`packages/fares-db/migrations/001.sql` and `002.sql` are authoritative. Application ID `0x42555352` and schema version 2 distinguish fares from timetables. SQLite >=3.51.3, WAL, `synchronous=FULL`, a 128 MiB writer cache, strict tables and persistent sidecars follow the existing deployment pattern. API connections are read-only with `query_only` enabled.
+`packages/fares-db/migrations/001.sql` and `002.sql` are authoritative. Application ID `0x42555352` and schema version 3 distinguish fares from timetables. Migration `003.sql` adds precomputed operator maps; see the [operator fare geometry guide](../../docs/operator-fare-geometry.md) for the schema-2 rebuild procedure. SQLite >=3.51.3, WAL, `synchronous=FULL`, a 128 MiB writer cache, strict tables and persistent sidecars follow the existing deployment pattern. API connections are read-only with `query_only` enabled.
 
 `documents` stores logical paths, SHA-256, publication timestamp, currency and original XML compressed with raw DEFLATE. XML retention preserves conditions and extensions beyond the projections. `entities` projects products, prices, price groups, directional matrices, zones, offers, profiles, fare-table context and selected rules into indexed rows. `data` is a JSON tree with namespace, element name, sorted attributes, ordered children and meaningful text. Large nested table/matrix containers are omitted from summary rule/table JSON because their records are separately projected; original XML remains complete.
 
@@ -94,3 +94,7 @@ The [national benchmark report](../../docs/benchmarks/fares-2026-11-02.md) recor
 ## Passenger catalogue
 
 The importer also publishes canonical areas, navigation families, condition variants, source mappings, membership and directional journey indexes in the same transaction. Existing detailed endpoints remain compatible. Start with `/api/fares/operators/ANEA/areas`; see [the catalogue API and bus.rip migration guide](../../docs/fares-catalogue.md) for bounded lists, lifecycle IDs, generation-aware navigation, supported journey patterns and interpretation limits. Schema-1 upgrades require one projection backfill using the complete source feed.
+
+## Operator fare maps
+
+`GET /api/fares/operators/:noc/geometry` serves all operator fare-area points, labels and approximate coverage in one request. Supply `--timetables-db PATH` / `TIMETABLES_DB_PATH` to precompute it during imports, or use `--rebuild-geometry` for existing catalogues. Compose supplies the read-only timetable mount automatically. See the [geometry and bus.rip integration guide](../../docs/operator-fare-geometry.md).

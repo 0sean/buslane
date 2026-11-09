@@ -11,11 +11,11 @@ export default defineHandler((event) => {
   const query: FaresQuery = { kind: "catalogue", noc };
   if (
     parts.length === 1 &&
-    ["areas", "tickets", "families", "routes", "changes"].includes(
+    ["areas", "tickets", "families", "routes", "changes", "geometry"].includes(
       resource ?? "",
     )
   )
-    query.action = resource;
+    query.action = resource === "geometry" ? "operatorGeometry" : resource;
   else if (resource === "journey-fares" && parts.length === 1)
     query.action = "journey";
   else if (

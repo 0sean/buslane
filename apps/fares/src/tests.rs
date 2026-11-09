@@ -723,7 +723,7 @@ fn catalogue_backfill_does_not_rewrite_unchanged_source_records() {
     .unwrap();
     drop(l);
     let migrated = db::connect(&legacy).unwrap();
-    assert_eq!(count(&migrated, "PRAGMA user_version"), 2);
+    assert_eq!(count(&migrated, "PRAGMA user_version"), 3);
     assert_eq!(count(&migrated, "SELECT catalogue_version FROM dataset"), 0);
 }
 

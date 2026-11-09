@@ -88,10 +88,17 @@ export async function fares(
       headers.set("etag", etag);
       headers.set("cache-control", "private, no-cache");
       if (
-        event.req.headers.get("if-none-match") === etag &&
-        typeof result.body === "string"
-      )
+        event.req.headers
+          .get("if-none-match")
+          ?.split(",")
+          .some(
+            (tag) =>
+              tag.trim() === "*" || tag.trim().replace(/^W\//, "") === etag,
+          )
+      ) {
+        if (result.body instanceof ReadableStream) await result.body.cancel();
         return new Response(null, { status: 304, headers });
+      }
     }
     if (result.nextCursor) headers.set("x-next-cursor", result.nextCursor);
     if (query.kind === "fareXml") {
@@ -102,6 +109,7 @@ export async function fares(
     if (error instanceof PoolError)
       throw new HTTPError({
         status: error.status,
+        headers: { "cache-control": "no-store" },
         body: { success: false, error: error.message },
       });
     throw error;
@@ -138,6 +146,7 @@ export async function timetableFares(
     if (error instanceof PoolError)
       throw new HTTPError({
         status: error.status,
+        headers: { "cache-control": "no-store" },
         body: { success: false, error: error.message },
       });
     throw error;

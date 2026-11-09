@@ -4,7 +4,7 @@ Buslane now derives a passenger catalogue in the fares importer. The raw documen
 
 ## Model and publication
 
-Schema 2 adds derived tables to the existing fares database. This keeps source changes, canonical groups, applicability, membership, matrices and the dataset generation in one WAL transaction. Existing readers see the previous committed snapshot until commit; any failed projection rolls back source and catalogue changes together. A second database would require a second publication protocol and could expose mismatched generations.
+Schema 2 adds derived tables to the existing fares database. Schema 3 adds [precomputed operator fare maps](operator-fare-geometry.md), with a rebuild from existing catalogue rows and timetable coordinates. This keeps source changes, canonical groups, applicability, membership, matrices and the dataset generation in one WAL transaction. Existing readers see the previous committed snapshot until commit; any failed projection rolls back source and catalogue changes together. A second database would require a second publication protocol and could expose mismatched generations.
 
 * **Areas** are operator-scoped navigation groups created from positive explicit access assignments. Matrix endpoints become journey points, not browsing areas. Unclassified/non-travel products remain discoverable in the operator ticket list with the explicit opt-in; they do not create travel browsing areas. Non-empty, explicitly published stop sets can group across different source zone names only when their access structures and line/direction restrictions agree. Empty/incomplete membership stays separate and is labelled incomplete. Published membership is not a geographical boundary.
 * **Families** group normalized product names and product type for navigation. They explicitly declare `equivalence: false`. Area-family lists count the applicable canonical variants and paginate families before loading variants.
@@ -39,6 +39,7 @@ All routes below start with `/api/fares/operators/:noc` and require the existing
 | `/routes/:routeId/origins` | Available origin points |
 | `/routes/:routeId/destinations?origin=:pointId` | Available destinations in that direction |
 | `/journey-fares?route_id=:routeId&origin=:pointId&destination=:pointId&date=YYYY-MM-DD` | Object containing a paginated `candidates` array and explicit interpretation status |
+| `/geometry` | Complete precomputed operator area coverage, points, labels and missing-coordinate diagnostics; see [map guide](operator-fare-geometry.md) |
 | `/changes` | Paginated lifecycle events for this operator |
 
 Operator/area/family ticket lists and route lists support case-insensitive **name-prefix** search with `q` (maximum 120 characters). Search is an indexed prefix range, not fuzzy/substring search. `include_unclassified=true` also exposes `other`/unknown product types; these are excluded from travel navigation by default, not permanently classified as donations. A missing ProductType can be classified from one of the explicitly supported standard TypeOfFareProductRef values; `product_type_source` reports that evidence. The `travel` flag controls recognised travel navigation; false also includes unclassified products and does not prove that a product has no travel right. Product types outside the recognised travel set require review.

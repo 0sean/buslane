@@ -68,6 +68,8 @@ Collection endpoints support optional `?limit=100&cursor=...`. Limits are 1–10
 
 `GET /up` is unauthenticated and returns `{success:true}` only when the database is compatible and an initial import has completed. Its generation header, API query logs and import reports provide operational visibility. Dataset age measures the last change to served data; use the timer journal to check the last successful feed check.
 
+The [operator fares geometry endpoint](docs/operator-fare-geometry.md) also returns complete fare-area points, labels and approximate coverage in one request. The fares importer precomputes it using a read-only timetable snapshot; existing fare catalogues can use `--rebuild-geometry`.
+
 ## Import and storage behaviour
 
 SQL migrations in `packages/timetable-db/migrations` are authoritative. Drizzle definitions describe the same columns, keys, indexes and references; tests compare them against SQLite. Database identity and schema version checks prevent opening an unrelated database. SQL owns strict storage types, checks, deferred foreign keys and `WITHOUT ROWID` options.

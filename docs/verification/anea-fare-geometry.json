@@ -1,0 +1,15 @@
+{
+  "noc": "ANEA",
+  "httpRequests": 1,
+  "faresGeneration": 10,
+  "timetableGeneration": 2,
+  "zones": 19,
+  "stopMemberships": 6234,
+  "mappedStopMemberships": 5527,
+  "polygons": 19,
+  "labels": 19,
+  "missingAreaIds": [],
+  "unmatchedStopCount": 564,
+  "responseBytes": 1323067,
+  "elapsedMs": 77
+}

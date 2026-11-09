@@ -3,7 +3,7 @@ use rusqlite::Connection;
 use std::path::Path;
 use std::time::Duration;
 
-pub const SCHEMA_VERSION: i64 = 2;
+pub const SCHEMA_VERSION: i64 = 3;
 pub const APPLICATION_ID: i64 = 0x42555352;
 pub const NORMALISATION_VERSION: i64 = 1;
 const MIGRATION: &str = include_str!("../../../packages/fares-db/migrations/001.sql");
@@ -65,6 +65,16 @@ pub fn connect(path: &Path) -> Result<Connection> {
         conn.execute_batch("BEGIN IMMEDIATE")?;
         if let Err(error) = conn.execute_batch(include_str!(
             "../../../packages/fares-db/migrations/002.sql"
+        )) {
+            conn.execute_batch("ROLLBACK")?;
+            return Err(error.into());
+        }
+        conn.execute_batch("COMMIT")?;
+    }
+    if version < 3 {
+        conn.execute_batch("BEGIN IMMEDIATE")?;
+        if let Err(error) = conn.execute_batch(include_str!(
+            "../../../packages/fares-db/migrations/003.sql"
         )) {
             conn.execute_batch("ROLLBACK")?;
             return Err(error.into());

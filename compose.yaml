@@ -70,8 +70,10 @@ services:
     environment:
       FARES_DB_PATH: /data/fares.sqlite
       FARES_SCRATCH_PATH: /scratch
+      TIMETABLES_DB_PATH: /timetables/timetables.sqlite
       FARES_SOURCE: ${FARES_SOURCE:-https://data.bus-data.dft.gov.uk/fares/download/bulk_archive}
       MIN_FREE_BYTES: ${MIN_FREE_BYTES:-536870912}
     volumes:
       - ${FARES_DATA_DIR:-./data/fares}:/data
       - ${FARES_SCRATCH_DIR:-./scratch/fares}:/scratch
+      - ${TIMETABLES_DATA_DIR:-./data}:/timetables:ro

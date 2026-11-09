@@ -1,5 +1,5 @@
 import Database from "better-sqlite3";
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 export function openFaresReader(path: string) {
   const sqlite = new Database(path, {

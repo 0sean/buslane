@@ -36,6 +36,46 @@ export function catalogue(
     throw new QueryError(400, "include_unclassified must be true or false");
   if (q.generation !== undefined && q.generation !== String(generation))
     throw new QueryError(409, "Fares catalogue changed; restart navigation");
+  if (q.action === "operatorGeometry") {
+    if (!q.noc || q.noc.length > 100)
+      throw new QueryError(400, "Invalid operator");
+    if (q.cursor || q.q)
+      throw new QueryError(
+        400,
+        "Map geometry does not support pagination or search",
+      );
+    if (
+      !get(
+        "SELECT 1 FROM catalogue_objects WHERE noc=? AND active=1 LIMIT 1",
+        q.noc,
+      )
+    )
+      throw new QueryError(404, "Operator catalogue not found");
+    const state = get(
+      "SELECT timetable_generation FROM geometry_state WHERE id=1 AND algorithm_version=1 AND fares_generation=?",
+      generation,
+    );
+    if (!state)
+      throw new QueryError(
+        503,
+        "Fare geometry is not ready; run the geometry rebuild with a timetable database",
+      );
+    const geometry = get(
+      "SELECT body FROM operator_geometry WHERE noc=?",
+      q.noc,
+    );
+    if (!geometry)
+      throw new QueryError(
+        503,
+        "Operator fare geometry is not ready; run the geometry rebuild",
+      );
+    return {
+      chunks: (function* () {
+        yield geometry.body as string;
+      })(),
+      nextCursor: () => undefined,
+    };
+  }
   const limit = q.limit ?? 50;
   if (!Number.isInteger(limit) || limit < 1 || limit > 100)
     throw new QueryError(400, "Catalogue limit must be between 1 and 100");

@@ -1,5 +1,6 @@
 mod catalogue;
 mod db;
+mod geometry;
 mod import;
 mod netex;
 mod source;
@@ -27,6 +28,8 @@ fn run() -> Result<()> {
     let mut minimum = env::var("MIN_FREE_BYTES")
         .unwrap_or_else(|_| "536870912".into())
         .parse::<u64>()?;
+    let mut timetable_path = env::var_os("TIMETABLES_DB_PATH").map(PathBuf::from);
+    let mut rebuild_geometry = false;
     let mut check = false;
     let mut backup = None;
     let mut args = env::args().skip(1);
@@ -47,6 +50,12 @@ fn run() -> Result<()> {
                     .context("--min-free-bytes requires a number")?
                     .parse()?
             }
+            "--timetables-db" => {
+                timetable_path = Some(PathBuf::from(
+                    args.next().context("--timetables-db requires a path")?,
+                ))
+            }
+            "--rebuild-geometry" => rebuild_geometry = true,
             "--check" => check = true,
             "--backup" => {
                 backup = Some(PathBuf::from(
@@ -55,7 +64,7 @@ fn run() -> Result<()> {
             }
             "--help" | "-h" => {
                 println!(
-                    "fares [--db PATH] [--source URL|ZIP|XML|DIR] [--scratch DIR] [--min-free-bytes N] [--check | --backup PATH]"
+                    "fares [--db PATH] [--source URL|ZIP|XML|DIR] [--scratch DIR] [--min-free-bytes N] [--timetables-db PATH] [--check | --backup PATH | --rebuild-geometry]"
                 );
                 return Ok(());
             }
@@ -63,7 +72,7 @@ fn run() -> Result<()> {
         }
     }
     ensure!(
-        !(check && backup.is_some()),
+        usize::from(check) + usize::from(backup.is_some()) + usize::from(rebuild_geometry) <= 1,
         "choose only one maintenance operation"
     );
     let parent = database
@@ -107,6 +116,16 @@ fn run() -> Result<()> {
         println!("backup created: {}", path.display());
         return Ok(());
     }
+    if rebuild_geometry {
+        let path = timetable_path
+            .as_deref()
+            .context("--rebuild-geometry requires --timetables-db or TIMETABLES_DB_PATH")?;
+        let timetable = geometry::open_timetable(path)?;
+        let generation = geometry::rebuild(&mut conn, &timetable, parent, minimum)?;
+        db::checkpoint(&conn)?;
+        println!("fare geometry rebuilt at generation {generation}");
+        return Ok(());
+    }
     for name in ["feed.zip.part", "download.json.part"] {
         match fs::remove_file(scratch.join(name)) {
             Ok(()) => {}
@@ -131,7 +150,18 @@ fn run() -> Result<()> {
     let work = tempfile::Builder::new()
         .prefix("fares-work-")
         .tempdir_in(&scratch)?;
-    let report = import::import(&mut conn, &path, work.path(), parent, minimum)?;
+    let timetable = timetable_path
+        .as_deref()
+        .map(geometry::open_timetable)
+        .transpose()?;
+    let report = import::import_with_geometry(
+        &mut conn,
+        &path,
+        work.path(),
+        parent,
+        minimum,
+        timetable.as_ref(),
+    )?;
     let wal_bytes_before_checkpoint = fs::metadata(format!("{}-wal", database.display()))
         .map(|m| m.len())
         .unwrap_or(0);

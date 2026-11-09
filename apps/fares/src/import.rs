@@ -81,12 +81,24 @@ fn reader_hash(reader: &mut impl Read, maximum: u64) -> Result<String> {
     Ok(format!("{:x}", sha.finalize()))
 }
 
+#[cfg(test)]
 pub fn import(
     conn: &mut Connection,
     path: &Path,
     scratch: &Path,
     database_dir: &Path,
     minimum: u64,
+) -> Result<Report> {
+    import_with_geometry(conn, path, scratch, database_dir, minimum, None)
+}
+
+pub fn import_with_geometry(
+    conn: &mut Connection,
+    path: &Path,
+    scratch: &Path,
+    database_dir: &Path,
+    minimum: u64,
+    timetable: Option<&Connection>,
 ) -> Result<Report> {
     let started = Instant::now();
     let changes = conn.total_changes();
@@ -105,10 +117,17 @@ pub fn import(
     let generation: i64 = tx.query_row("SELECT generation FROM dataset WHERE id=1", [], |r| {
         r.get(0)
     })?;
+    let geometry_ready = match timetable {
+        Some(t) => {
+            crate::geometry::ready(&tx, generation, crate::geometry::timetable_generation(t)?)?
+        }
+        None => true,
+    };
     let mut root_hash = None;
     if version == db::NORMALISATION_VERSION
         && catalogue_version == catalogue::VERSION
         && generation > 0
+        && geometry_ready
         && path.is_file()
         && !path
             .extension()
@@ -257,6 +276,22 @@ pub fn import(
         catalogue::publish(&tx, generation + 1)?;
         importer.report.projection_ms += projection_started.elapsed().as_millis();
         tx.execute("UPDATE dataset SET generation=generation+1,imported_at=CURRENT_TIMESTAMP,normalisation_version=? WHERE id=1",[db::NORMALISATION_VERSION])?;
+    }
+    if let Some(timetable) = timetable {
+        if changed || importer.force || !geometry_ready {
+            if !changed && !importer.force {
+                tx.execute("UPDATE dataset SET generation=generation+1 WHERE id=1", [])?;
+            }
+            let next_generation =
+                tx.query_row("SELECT generation FROM dataset WHERE id=1", [], |r| {
+                    r.get(0)
+                })?;
+            crate::geometry::generate(&tx, timetable, next_generation)?;
+        }
+    } else if changed || importer.force {
+        // Never serve geometry from a different fares generation.
+        tx.execute("DELETE FROM geometry_state", [])?;
+        tx.execute("DELETE FROM operator_geometry", [])?;
     }
     source::check_disk(database_dir, minimum)?;
     db::validate_deferred_foreign_keys(&tx)?;

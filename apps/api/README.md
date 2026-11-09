@@ -15,3 +15,5 @@ The shared Drizzle schema describes physical storage. Repository projections in 
 Optional `FARES_DB_PATH` enables the fares catalogue and timetable-linked fares routes. Seed it with `apps/fares` first. `FARES_WORKERS` defaults to 1, `FARES_CACHE_BYTES` to 8 MiB; `FARES_WORKER_PATH` locates the additional built worker. See [the fares README](../fares/README.md) for endpoints, filters, incremental behavior and pricing semantics. Build both Rust importers before running the API tests.
 
 `GET /api/timetables/agencies/:agencyId/geometry` serves precomputed operator GeoJSON with generation-bound ETags. See the [endpoint and rebuild guide](../../docs/operator-geometry.md) for its contract, schema-2 upgrade procedure and bus.rip integration.
+
+`GET /api/fares/operators/:noc/geometry` serves precomputed fare-area coverage with the catalogue ETag and generation headers. Fares schema 3 and a map rebuild using timetable coordinates are required; see the [operator fares map guide](../../docs/operator-fare-geometry.md).
