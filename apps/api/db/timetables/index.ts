@@ -2,7 +2,7 @@ import Database from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
 import * as schema from "../../../../packages/timetable-db/schema.ts";
 export { schema };
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 export function openReader(path: string) {
   const sqlite = new Database(path, {
     readonly: true,

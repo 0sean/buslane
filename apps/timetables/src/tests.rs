@@ -292,3 +292,147 @@ fn deleted_referenced_parent_aborts_without_global_fk_scan() {
         1
     );
 }
+
+fn geometry_body(conn: &Connection) -> serde_json::Value {
+    let body: String = conn.query_row("SELECT body FROM agency_geometry WHERE agency_id=(SELECT id FROM agencies WHERE public_id='A1')", [], |r| r.get(0)).unwrap();
+    serde_json::from_str(&body).unwrap()
+}
+
+#[test]
+fn geometry_preserves_branches_directions_splits_and_deduplicates() {
+    let (_temp, mut conn, _) = setup();
+    // All these trips share a shape and destination; distinct branches must survive.
+    conn.execute_batch("INSERT INTO stops(public_id,name,lon,lat,wheelchair_boarding,location_type)
+        VALUES('BAD','Bad','NaN','51',0,0);
+        INSERT INTO routes(public_id,agency_id,route_type) SELECT 103,id,3 FROM agencies WHERE public_id='A1';").unwrap();
+    for (name, direction, stops) in [
+        ("reverse", 1, vec!["S2", "S1"]),
+        ("branch", 0, vec!["S1", "STATION"]),
+        ("duplicate", 0, vec!["S1", "S1", "S2"]),
+        ("split", 0, vec!["S1", "S2", "BAD", "S2", "STATION"]),
+        ("singletons", 0, vec!["S1", "BAD", "S2"]),
+        ("empty", 0, vec![]),
+    ] {
+        conn.execute("INSERT INTO trips(public_id,route_id,service_id,headsign,direction_id,block_id,wheelchair_accessible,vehicle_journey_code,shape_id)
+            SELECT ?,route_id,service_id,headsign,?,'',0,'',shape_id FROM trips WHERE public_id='T1'", rusqlite::params![name,direction]).unwrap();
+        for (seq, stop) in stops.iter().enumerate().rev() {
+            conn.execute("INSERT INTO stop_times(trip_id,stop_id,stop_sequence,pickup_type,drop_off_type,timepoint)
+                SELECT t.id,s.id,?,0,0,0 FROM trips t,stops s WHERE t.public_id=? AND s.public_id=?", rusqlite::params![seq as i64,name,stop]).unwrap();
+        }
+    }
+    geometry::rebuild(&mut conn).unwrap();
+    let body = geometry_body(&conn);
+    assert_eq!(body["missingRouteIds"], serde_json::json!([101, 103]));
+    let feature = &body["network"]["features"][0];
+    assert_eq!(feature["id"], 101);
+    assert_eq!(feature["properties"]["routeId"], 101);
+    let lines = feature["geometry"]["coordinates"].as_array().unwrap();
+    assert_eq!(lines.len(), 4);
+    for expected in [
+        serde_json::json!([[-0.12, 51.5], [-0.13, 51.51]]),
+        serde_json::json!([[-0.13, 51.51], [-0.12, 51.5]]),
+        serde_json::json!([[-0.12, 51.5], [-0.125, 51.505]]),
+        serde_json::json!([[-0.13, 51.51], [-0.125, 51.505]]),
+    ] {
+        assert!(lines.contains(&expected), "{lines:?}");
+    }
+    // Route with just a single-stop trip has no feature.
+    let other: String = conn
+        .query_row(
+            "SELECT body FROM agency_geometry WHERE agency_id=2",
+            [],
+            |r| r.get(0),
+        )
+        .unwrap();
+    assert_eq!(
+        serde_json::from_str::<serde_json::Value>(&other).unwrap(),
+        serde_json::json!({"network":{"type":"FeatureCollection","features":[]},"missingRouteIds":[102]})
+    );
+}
+
+#[test]
+fn geometry_publication_is_atomic_and_generation_consistent() {
+    let (temp, mut conn, path) = setup();
+    let reader = Connection::open_with_flags(path, OpenFlags::SQLITE_OPEN_READ_ONLY).unwrap();
+    reader.execute_batch("BEGIN").unwrap();
+    let old = geometry_body(&reader);
+    replace(temp.path(), "stops.txt", "51.5000", "51.6000");
+    apply(&mut conn, temp.path()).unwrap();
+    assert_ne!(geometry_body(&conn), old);
+    assert_eq!(geometry_body(&reader), old);
+    assert!(geometry::ready(&reader, 1).unwrap());
+    assert!(geometry::ready(&conn, 2).unwrap());
+    reader.execute_batch("COMMIT").unwrap();
+    assert_eq!(geometry_body(&reader), geometry_body(&conn));
+    conn.execute_batch("CREATE TRIGGER fail_geometry BEFORE INSERT ON agency_geometry BEGIN SELECT RAISE(ABORT,'generation failed'); END;").unwrap();
+    let before = geometry_body(&conn);
+    replace(temp.path(), "stops.txt", "51.6000", "51.7000");
+    assert!(apply(&mut conn, temp.path()).is_err());
+    assert_eq!(generation(&conn), 2);
+    assert_eq!(geometry_body(&conn), before);
+    assert_eq!(
+        conn.query_row("SELECT lat FROM stops WHERE public_id='S1'", [], |r| r
+            .get::<_, String>(
+            0
+        ))
+        .unwrap(),
+        "51.6000"
+    );
+    assert!(geometry::rebuild(&mut conn).is_err());
+    assert_eq!(generation(&conn), 2);
+}
+
+#[test]
+fn geometry_migration_backfills_even_when_feed_is_unchanged() {
+    let (temp, mut conn, path) = setup();
+    conn.execute_batch("DROP TABLE agency_geometry; PRAGMA user_version=1;")
+        .unwrap();
+    drop(conn);
+    conn = db::connect(&path).unwrap();
+    assert!(!geometry::ready(&conn, 1).unwrap());
+    apply(&mut conn, temp.path()).unwrap();
+    assert_eq!(generation(&conn), 2);
+    assert!(geometry::ready(&conn, 2).unwrap());
+    assert_eq!(geometry::rebuild(&mut conn).unwrap(), 3);
+    assert!(geometry::ready(&conn, 3).unwrap());
+    let writes = conn.total_changes();
+    apply(&mut conn, temp.path()).unwrap();
+    assert_eq!(conn.total_changes(), writes);
+}
+
+#[test]
+fn missing_geometry_uses_shape_direction_headsign_representatives() {
+    let (_temp, mut conn, _) = setup();
+    conn.execute_batch("INSERT INTO stop_times(trip_id,stop_id,stop_sequence,pickup_type,drop_off_type,timepoint)
+        SELECT t.id,s.id,2,0,0,0 FROM trips t,stops s WHERE t.public_id='T2' AND s.public_id='S2';
+        INSERT INTO trips(public_id,route_id,service_id,headsign,direction_id,block_id,wheelchair_accessible,vehicle_journey_code,shape_id)
+        SELECT 'ZZZ',route_id,service_id,headsign,direction_id,'',0,'',shape_id FROM trips WHERE public_id='T1';").unwrap();
+    // The empty duplicate is not the representative, so it does not mark 101 missing.
+    geometry::rebuild(&mut conn).unwrap();
+    assert_eq!(
+        geometry_body(&conn)["missingRouteIds"],
+        serde_json::json!([])
+    );
+    // A distinct destination has its own representative and no usable line.
+    conn.execute(
+        "UPDATE trips SET headsign='Different destination' WHERE public_id='ZZZ'",
+        [],
+    )
+    .unwrap();
+    geometry::rebuild(&mut conn).unwrap();
+    assert_eq!(
+        geometry_body(&conn)["missingRouteIds"],
+        serde_json::json!([101])
+    );
+    // No stop times at all is missing, even when the route also has usable trips.
+    conn.execute(
+        "DELETE FROM stop_times WHERE trip_id=(SELECT id FROM trips WHERE public_id='T1')",
+        [],
+    )
+    .unwrap();
+    geometry::rebuild(&mut conn).unwrap();
+    assert_eq!(
+        geometry_body(&conn)["missingRouteIds"],
+        serde_json::json!([101])
+    );
+}

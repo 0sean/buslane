@@ -1,0 +1,14 @@
+{
+  "agencyId": "noc:ANEA",
+  "agencyPublicId": "OP229",
+  "httpRequests": 1,
+  "generation": 2,
+  "routes": 93,
+  "features": 93,
+  "missingRouteIds": [],
+  "lines": 432,
+  "points": 18799,
+  "responseBytes": 422883,
+  "elapsedMs": 99,
+  "etag": "W/\"geometry-v1-677812a867963e43fe39be03632b03e454ad24ee13216ce0aebc3feada6e1892\""
+}

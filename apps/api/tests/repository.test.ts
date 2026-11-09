@@ -156,3 +156,27 @@ test("relationship updates are visible together with the committed generation", 
     f.close();
   }
 });
+
+test("operator geometry is a constant-query persisted document with public IDs", () => {
+  const f = fixture();
+  const db = f.open();
+  try {
+    const queries: string[] = [];
+    const traced = new (db.constructor as any)(f.database, { verbose: (sql: string) => queries.push(sql) });
+    try {
+      const result = execute(new Repository(traced), { kind: "agencyGeometry", id: "noc:ONE" });
+      assert.equal(queries.length, 2);
+      assert.deepEqual(result.body, {
+        network: { type: "FeatureCollection", features: [{
+          type: "Feature", id: 101, properties: { routeId: 101 },
+          geometry: { type: "MultiLineString", coordinates: [[[-0.12, 51.5], [-0.13, 51.51]]] },
+        }] },
+        missingRouteIds: [101],
+      });
+      assert.throws(() => execute(new Repository(traced), { kind: "agencyGeometry", id: "A1" }, 2),
+        (e: any) => e instanceof QueryError && e.status === 503);
+      assert.throws(() => execute(new Repository(traced), { kind: "agencyGeometry", id: "A1", limit: 1 }),
+        (e: any) => e instanceof QueryError && e.status === 400);
+    } finally { traced.close(); }
+  } finally { db.close(); f.close(); }
+});

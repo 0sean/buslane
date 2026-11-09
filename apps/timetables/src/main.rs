@@ -1,4 +1,5 @@
 mod db;
+mod geometry;
 mod import;
 mod source;
 
@@ -28,6 +29,7 @@ fn run() -> Result<()> {
     let mut backup = None;
     let mut vacuum = false;
     let mut check = false;
+    let mut rebuild_geometry = false;
     let mut args = env::args().skip(1);
     while let Some(arg) = args.next() {
         match arg.as_str() {
@@ -53,9 +55,10 @@ fn run() -> Result<()> {
             }
             "--vacuum" => vacuum = true,
             "--check" => check = true,
+            "--rebuild-geometry" => rebuild_geometry = true,
             "--help" | "-h" => {
                 println!(
-                    "timetables [--db PATH] [--source URL|ZIP|DIR] [--scratch DIR] [--min-free-bytes N] [--backup PATH | --vacuum | --check]"
+                    "timetables [--db PATH] [--source URL|ZIP|DIR] [--scratch DIR] [--min-free-bytes N] [--backup PATH | --vacuum | --check | --rebuild-geometry]"
                 );
                 return Ok(());
             }
@@ -85,6 +88,7 @@ fn run() -> Result<()> {
         Err(error) => return Err(error).context("acquire stable importer lock"),
     }
     if !check
+        && !rebuild_geometry
         && !vacuum
         && backup.is_none()
         && (source.starts_with("https://") || source.starts_with("http://"))
@@ -102,9 +106,19 @@ fn run() -> Result<()> {
     source::check_disk(parent, minimum)?;
     let mut conn = db::connect(&database)?;
     ensure!(
-        usize::from(backup.is_some()) + usize::from(vacuum) + usize::from(check) <= 1,
+        usize::from(backup.is_some())
+            + usize::from(vacuum)
+            + usize::from(check)
+            + usize::from(rebuild_geometry)
+            <= 1,
         "choose only one maintenance operation"
     );
+    if rebuild_geometry {
+        let generation = geometry::rebuild(&mut conn)?;
+        db::checkpoint(&conn)?;
+        println!("geometry rebuilt at generation {generation}");
+        return Ok(());
+    }
     if let Some(path) = backup {
         ensure!(!path.exists(), "backup destination already exists");
         conn.backup(rusqlite::MAIN_DB, &path, None)?;

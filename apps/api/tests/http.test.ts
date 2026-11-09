@@ -2,7 +2,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { createServer } from "node:net";
-import { resolve } from "node:path";
+import { readFileSync, writeFileSync } from "node:fs";
+import { resolve, join } from "node:path";
 import { fixture, root, workerPath } from "./helpers.ts";
 async function freePort(): Promise<number> {
   const server = createServer();
@@ -57,6 +58,7 @@ test("built Nitro API preserves routes, auth, pagination, errors and readiness",
       "/agencies/noc:ONE",
       "/agencies/A1/routes",
       "/agencies/A1/stops",
+      "/agencies/noc:ONE/geometry",
       "/routes/101",
       "/routes/101/trips",
       "/trips/T1",
@@ -73,6 +75,22 @@ test("built Nitro API preserves routes, auth, pagination, errors and readiness",
       assert.equal(response.headers.get("x-timetable-generation"), "1");
       await response.json();
     }
+    const geometryPath = "/api/timetables/agencies/noc:ONE/geometry";
+    assert.equal((await fetch(base + geometryPath)).status, 400);
+    const geometry = await get(geometryPath);
+    assert.equal(geometry.headers.get("cache-control"), "private, no-cache");
+    const etag = geometry.headers.get("etag")!;
+    assert.ok(etag);
+    const network = await geometry.json();
+    assert.equal(network.network.features[0].id, 101);
+    assert.deepEqual(network.missingRouteIds, [101]);
+    const conditional = await fetch(base + geometryPath, { headers: {
+      Authorization: "Bearer fixture-token", "If-None-Match": etag,
+    } });
+    assert.equal(conditional.status, 304);
+    assert.equal(await conditional.text(), "");
+    assert.equal((await get(geometryPath + "?limit=1")).status, 400);
+    assert.equal((await get("/api/timetables/agencies/missing/geometry")).status, 404);
     const missing = await get("/api/timetables/trips/missing");
     assert.equal(missing.status, 404);
     assert.equal((await missing.json()).error, "Trip not found");
@@ -86,6 +104,31 @@ test("built Nitro API preserves routes, auth, pagination, errors and readiness",
     });
     assert.equal(cleared.status, 200);
     assert.ok((await cleared.json()).deleted > 0);
+    const stopsFile = join(f.feed, "stops.txt");
+    writeFileSync(stopsFile, readFileSync(stopsFile, "utf8").replace("51.5000", "51.6000"));
+    f.apply();
+    const updated = await fetch(base + geometryPath, { headers: {
+      Authorization: "Bearer fixture-token", "If-None-Match": etag,
+    } });
+    assert.equal(updated.status, 200);
+    assert.notEqual(updated.headers.get("etag"), etag);
+    assert.equal(updated.headers.get("x-timetable-generation"), "2");
+    assert.notDeepEqual(await updated.json(), network);
+    const broken = f.open();
+    broken.exec("DELETE FROM agency_geometry; UPDATE dataset SET generation=generation+1");
+    broken.close();
+    const unavailable = await get(geometryPath);
+    assert.equal(unavailable.status, 503);
+    assert.equal(unavailable.headers.get("cache-control"), "no-store");
+    const failedDb = f.open();
+    failedDb.exec("DROP TABLE agency_geometry; UPDATE dataset SET generation=generation+1");
+    failedDb.close();
+    const failed = await fetch(base + geometryPath, { headers: {
+      Authorization: "Bearer fixture-token", "If-None-Match": "*",
+    } });
+    assert.equal(failed.status, 500);
+    assert.equal(failed.headers.get("cache-control"), "no-store");
+    assert.equal(failed.headers.get("etag"), null);
     const writer = f.open();
     writer.prepare("UPDATE dataset SET generation=0").run();
     writer.close();

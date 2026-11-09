@@ -51,10 +51,12 @@ Send `Authorization: Bearer AUTH_KEY` to all `/api` routes. The existing paths r
 
 | Resource | Paths after `/api/timetables` |
 | --- | --- |
-| Agencies | `/agencies`, `/agencies/:id`, `/agencies/:agencyId/routes`, `/agencies/:agencyId/stops` |
+| Agencies | `/agencies/:agencyId/geometry`, `/agencies`, `/agencies/:id`, `/agencies/:agencyId/routes`, `/agencies/:agencyId/stops` |
 | Routes | `/routes/:id`, `/routes/:routeId/trips` |
 | Trips and services | `/trips/:id`, `/services/:id` |
 | Stops | `/stops`, `/stops/:stopId/stop_times` |
+
+The [operator geometry endpoint](docs/operator-geometry.md) returns a complete stop-to-stop GeoJSON network in one request, with import-time precomputation, generation-bound ETags and an existing-import rebuild command.
 
 Agency IDs also accept `noc:CODE`. Responses retain snake-case fields, enum labels, boolean/null values, decimal strings, string dates/timestamps, public foreign keys and GTFS times beyond midnight. Nested stop times are ordered by sequence. Valid interpolated times remain empty strings.
 

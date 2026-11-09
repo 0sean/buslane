@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { HTTPError, getQuery, type HTTPEvent } from "h3";
 import { useDb } from "./db.ts";
 import { PoolError } from "./pool.ts";
@@ -40,6 +41,30 @@ export async function timetable(
       "x-timetable-generation": String(result.generation),
       "cache-control": "private, no-store",
     });
+    if (query.kind === "agencyGeometry") {
+      // The persisted complete document is validated before the worker sends it.
+      // Hashing the generation and request identity also isolates agencies.
+      const etag =
+        'W/"geometry-v1-' +
+        createHash("sha256")
+          .update(JSON.stringify([result.generation, query.id]))
+          .digest("hex") +
+        '"';
+      headers.set("etag", etag);
+      headers.set("cache-control", "private, no-cache");
+      const matches = event.req.headers
+        .get("if-none-match")
+        ?.split(",")
+        .some((tag) =>
+          tag.trim() === "*" ||
+          tag.trim().replace(/^W\//, "") === etag.replace(/^W\//, ""),
+        );
+      if (matches) {
+        // Cancel any streamed body so its worker releases the read snapshot.
+        if (result.body instanceof ReadableStream) await result.body.cancel();
+        return new Response(null, { status: 304, headers });
+      }
+    }
     if (result.nextCursor) headers.set("x-next-cursor", result.nextCursor);
     console.info(
       JSON.stringify({
@@ -54,7 +79,17 @@ export async function timetable(
     if (error instanceof PoolError)
       throw new HTTPError({
         status: error.status,
+        headers:
+          query.kind === "agencyGeometry"
+            ? { "cache-control": "no-store" }
+            : undefined,
         body: { success: false, error: error.message },
+      });
+    if (query.kind === "agencyGeometry")
+      throw new HTTPError({
+        status: 500,
+        headers: { "cache-control": "no-store" },
+        body: { success: false, error: "Geometry query failed" },
       });
     throw error;
   }

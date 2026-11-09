@@ -56,7 +56,8 @@ pub fn import(
     let generation: i64 = conn.query_row("SELECT generation FROM dataset WHERE id=1", [], |r| {
         r.get(0)
     })?;
-    if changed.is_empty() {
+    let geometry_ready = crate::geometry::ready(conn, generation)?;
+    if changed.is_empty() && geometry_ready {
         return Ok(Report {
             generation,
             tables: BTreeMap::new(),
@@ -112,6 +113,7 @@ pub fn import(
     if importer.counts.iter().any(|(table, count)| {
         !matches!(table.as_str(), "shapes" | "shape_points") && count.changes() > 0
     }) || generation == 0
+        || !geometry_ready
     {
         generation += 1;
         tx.execute("UPDATE dataset SET generation=?,imported_at=strftime('%Y-%m-%d %H:%M:%f','now'),normalisation_version=? WHERE id=1", [generation,NORMALISATION_VERSION])?;
@@ -123,6 +125,9 @@ pub fn import(
     }
     let tables = std::mem::take(&mut importer.counts);
     drop(importer);
+    if !geometry_ready || !crate::geometry::ready(&tx, generation)? {
+        crate::geometry::generate(&tx, generation)?;
+    }
     check_disk(disk, minimum)?;
     tx.commit().context("commit validated timetable update")?;
     Ok(Report {

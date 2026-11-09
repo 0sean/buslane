@@ -101,7 +101,7 @@ test("API connections reject writes and incompatible schemas", () => {
     assert.throws(() => reader.sqlite.exec("DELETE FROM stops"), /readonly/i);
     reader.sqlite.close();
     const writer = f.open();
-    writer.pragma("user_version=2");
+    writer.pragma("user_version=99");
     writer.close();
     assert.throws(() => openReader(f.database), /Incompatible/);
   } finally {

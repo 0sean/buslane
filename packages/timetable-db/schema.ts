@@ -205,3 +205,10 @@ export const agencyStops = sqliteTable(
     index("agency_stops_stop").on(t.stopId),
   ],
 );
+
+export const agencyGeometry = sqliteTable("agency_geometry", {
+  agencyId: integer("agency_id").primaryKey().references(() => agencies.id, { onDelete: "cascade" }),
+  generation: integer("generation").notNull(),
+  algorithmVersion: integer("algorithm_version").notNull(),
+  body: text("body").notNull(),
+});

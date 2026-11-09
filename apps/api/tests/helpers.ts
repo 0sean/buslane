@@ -42,7 +42,9 @@ export function fixture() {
   };
 }
 export const migration = () =>
-  readFileSync(
-    resolve(root, "packages/timetable-db/migrations/001.sql"),
-    "utf8",
-  );
+  ["001.sql", "002.sql"]
+    .map((name) => readFileSync(
+      resolve(root, "packages/timetable-db/migrations/" + name),
+      "utf8",
+    ))
+    .join("\n");

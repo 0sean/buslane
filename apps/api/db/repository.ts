@@ -4,6 +4,7 @@ import { serialize } from "../utils/serialize.ts";
 export type Kind =
   | "agencies"
   | "agency"
+  | "agencyGeometry"
   | "agencyRoutes"
   | "agencyStops"
   | "route"
@@ -298,6 +299,20 @@ export class Repository {
     query: Query,
     generation: number,
   ): { chunks: Generator<string>; nextCursor: () => string | undefined } {
+    if (query.kind === "agencyGeometry") {
+      if (query.limit !== undefined || query.cursor !== undefined)
+        throw new QueryError(400, "Geometry does not support pagination");
+      const agency = this.agency(query.id!);
+      const geometry = this.get(
+        "SELECT body FROM agency_geometry WHERE agency_id=? AND generation=? AND algorithm_version=1",
+        agency._pk, generation,
+      );
+      if (!geometry) throw new QueryError(503, "Timetable geometry is not ready; run the geometry rebuild");
+      return {
+        chunks: (function* () { yield geometry.body as string; })(),
+        nextCursor: () => undefined,
+      };
+    }
     let after: any = [
       "agencies",
       "stops",
