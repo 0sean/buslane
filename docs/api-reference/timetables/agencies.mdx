@@ -1,0 +1,51 @@
+---
+title: "Agencies"
+description: "Find operators and their routes and stops."
+---
+
+Agency records correspond to [GTFS agency.txt](https://gtfs.org/documentation/schedule/reference/#agencytxt).
+See [API conventions](/api-reference/overview) for authentication and pagination.
+
+## List agencies
+
+`GET /api/timetables/agencies`
+
+Returns an array of agencies. Supports `limit` and `cursor`.
+
+## Get an agency
+
+`GET /api/timetables/agencies/{id}`
+
+Returns one agency. Use its public string `id`, or `noc:{code}` to look up a National Operator Code. If several agencies share a NOC, this returns the first by public ID.
+
+```bash
+curl -H "Authorization: Bearer $AUTH_KEY" \
+  'http://localhost:3000/api/timetables/agencies/noc:ANEA'
+```
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `id` | string | Public agency ID |
+| `name` | string | Operator name |
+| `noc` | string | National Operator Code |
+| `url`, `timezone`, `lang`, `phone` | string or null | Operator details |
+| `created_at` | string | Record creation timestamp |
+
+## List agency routes
+
+`GET /api/timetables/agencies/{agencyId}/routes`
+
+Returns an array of [routes](/api-reference/timetables/routes), each with a `trips` array of basic trip records. Supports `limit` and `cursor` for routes; nested trips are not paginated.
+
+The `agencyId` accepts a public agency ID or `noc:{code}`. Route and trip records correspond to [GTFS routes.txt](https://gtfs.org/documentation/schedule/reference/#routestxt) and [trips.txt](https://gtfs.org/documentation/schedule/reference/#tripstxt).
+
+## List an agency's stops
+
+`GET /api/timetables/agencies/{agencyId}/stops`
+
+Returns an array of [stops](/api-reference/timetables/stops) served by the agency. Supports `limit` and `cursor`.
+The `agencyId` accepts a public agency ID or `noc:{code}`.
+
+Stop records correspond to [GTFS stops.txt](https://gtfs.org/documentation/schedule/reference/#stopstxt).
+
+For map data, use [agency geometry](/api-reference/timetables/geometry). For fare candidates, use [linked fares](/api-reference/timetables/fares).

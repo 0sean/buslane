@@ -1,0 +1,25 @@
+---
+title: "Agency geometry"
+description: "Draw an operator's route network in one request."
+---
+
+`GET /api/timetables/agencies/{agencyId}/geometry`
+
+Returns precomputed map data for an agency. Use a public agency ID or `noc:{code}`. This endpoint rejects `limit` and `cursor`.
+
+```json
+{
+  "network": {
+    "type": "FeatureCollection",
+    "features": []
+  },
+  "missingRouteIds": []
+}
+```
+
+`network.features` contains GeoJSON `MultiLineString` features with a numeric public route `id` and `properties.routeId`. Coordinates use `[longitude, latitude]`.
+`missingRouteIds` lists routes with missing or incomplete geometry; a listed route can still have usable segments.
+
+Lines join scheduled stops and represent stop patterns, rather than road-level paths from [GTFS shapes.txt](https://gtfs.org/documentation/schedule/reference/#shapestxt).
+
+The response includes `X-Timetable-Generation` and an `ETag`. Send `If-None-Match` to check for changes; unchanged data returns `304` without a body. Missing agencies return `404`; geometry that has not been built for the current generation returns `503`.

@@ -1,0 +1,69 @@
+---
+title: "Operator catalogue"
+description: "Browse passenger-facing areas, ticket families, and journey fare candidates."
+---
+
+All paths below start with `/api/fares/operators/{noc}` and use `GET`. The path NOC selects the operator. All routes require [bearer authentication](/api-reference/overview).
+
+Areas describe coverage. Families group related tickets for navigation. Tickets retain individual condition variants. Routes and points support directional journey lookup. Catalogue IDs are opaque strings such as `area_` followed by a 64-character hexadecimal hash; they differ from timetable IDs and numeric fare entity IDs.
+
+## Browse and search
+
+| Path | Response |
+| --- | --- |
+| `/areas` | Area summaries |
+| `/families` | Ticket family summaries |
+| `/tickets` | Ticket variant summaries |
+| `/routes` | Catalogue route summaries |
+| `/areas/{id}/families` | Families covering an area, with `variant_count` |
+| `/areas/{id}/tickets` | Ticket variants covering an area; accepts `family_id` |
+| `/families/{id}/tickets` | Ticket variants in a family |
+
+These routes return arrays and support `q` for a case-insensitive prefix search, up to 120 characters. Family and ticket lists show travel products by default; use `include_unclassified=true` to include unclassified entries.
+
+Summaries contain `id`, `kind`, `name`, `revision`, `ticket_count`, `family_id`, and additional fields from the object's summary.
+
+```bash
+curl -H "Authorization: Bearer $AUTH_KEY" \
+  'http://localhost:3000/api/fares/operators/ANEA/areas?limit=20'
+```
+
+## Details and relationships
+
+| Path | Response |
+| --- | --- |
+| `/{resource}/{id}` | Object summary plus `detail`, `source_count`, and `noc` |
+| `/{resource}/{id}/sources` | Array of source mappings: `document_id`, `anchor`, `source_ref`, `source_version`, `name`, and `context` |
+| `/{resource}/{id}/geometry` | Object with `geometry: null`, `status: "unavailable"`, and a reason |
+| `/areas/{id}/stops`, `/points/{id}/stops` | Array of published stop memberships with `code` and `name` |
+| `/tickets/{id}/areas` | Related area summaries |
+| `/tickets/{id}/routes` | Related route summaries |
+| `/tickets/{id}/families` | Related family summaries |
+
+For the generic paths, `resource` is `areas`, `tickets`, `families`, `routes`, or `points`. Use [operator fare geometry](/api-reference/fares/geometry) to draw approximate coverage; individual object geometry is unavailable.
+
+Source mappings connect catalogue objects to the [original fare documents](/api-reference/fares/records#documents).
+
+## Journey fare candidates
+
+| Path | Required query parameters | Response |
+| --- | --- | --- |
+| `/routes/{id}/origins` | None | Origin point summaries |
+| `/routes/{id}/destinations` | `origin` | Destination point summaries for that origin |
+| `/journey-fares` | `route_id`, `origin`, `destination`, `date` | Journey candidate result |
+
+Use catalogue route and point IDs, and a valid date formatted `YYYY-MM-DD`. Select an origin and then a destination to preserve direction.
+
+The journey result contains `status`, a `candidates` array, `conditions_evaluated: false`, and `unsupported_patterns_possible: true`. Its status is `published_candidates` or `no_supported_published_fare`.
+
+Candidates include decimal-string `amount`, `currency`, `date`, `unresolved_count`, and a status of `published_candidate` or `outside_published_validity`. The date check flags candidates outside published date bounds; it does not remove them or evaluate all conditions. An empty result does not prove that no fare exists.
+
+## Pagination and lifecycle
+
+Catalogue collections default to 50 items and accept `limit=1..100` and `cursor`. Journey results paginate their `candidates` array. Follow `X-Next-Cursor`, preserving every parameter and the page size.
+
+Responses include `X-Catalogue-Version: 1`, `X-Catalogue-Generation`, `X-Fares-Generation`, and an `ETag`. Send `If-None-Match` to check for changes.
+
+Pass `generation` from the first response's `X-Catalogue-Generation` on subsequent navigation requests to require the same dataset. A changed generation returns `409`; restart navigation and pagination.
+
+`GET /changes` returns a paginated array of `generation`, `previous_id`, `current_id`, and `reason`. Use it to inspect replacements after an item returns `410` because it was removed or repartitioned. A missing ID returns `404`; a malformed ID returns `400`.

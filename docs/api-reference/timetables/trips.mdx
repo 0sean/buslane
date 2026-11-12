@@ -1,0 +1,33 @@
+---
+title: "Trips"
+description: "Get a scheduled journey, its stops, and its service calendar."
+---
+
+`GET /api/timetables/trips/{id}`
+
+Returns one trip with its `route`, `service`, `frequencies`, and ordered `stop_times`. Each stop time includes a full `stop` record. Use a public string trip ID returned by a route.
+
+Trip records correspond to [GTFS trips.txt](https://gtfs.org/documentation/schedule/reference/#tripstxt). Field names use Buslane's shorter names:
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `id` | string | Public trip ID |
+| `route_id`, `service_id` | integer | Public route and service IDs |
+| `headsign` | string or null | Destination shown to passengers |
+| `direction_id` | string | `outbound` or `inbound` |
+| `block_id` | string | Vehicle working identifier |
+| `wheelchair_accessible` | boolean | Imported accessibility flag |
+| `vehicle_journey_code` | string | Source vehicle journey code |
+| `shape_id` | string or null | Referenced shape ID |
+| `created_at` | string | Record creation timestamp |
+
+## Nested records
+
+| Field | Contents | GTFS reference |
+| --- | --- | --- |
+| `route` | Route fields, without nested trips | [routes.txt](https://gtfs.org/documentation/schedule/reference/#routestxt) |
+| `service` | Weekday flags and start/end dates; no calendar exceptions | [calendar.txt](https://gtfs.org/documentation/schedule/reference/#calendartxt) |
+| `frequencies` | `id`, `trip_id`, `start_time`, `end_time`, `headway_secs`, `exact_times`, `created_at` | [frequencies.txt](https://gtfs.org/documentation/schedule/reference/#frequenciestxt) |
+| `stop_times` | Ordered calls, each with a `stop` object | [stop_times.txt](https://gtfs.org/documentation/schedule/reference/#stop_timestxt) |
+
+`exact_times` uses `frequency_based` or `schedule_based`. Times use `HH:MM:SS` and can exceed `24:00:00`. See [stop times](/api-reference/timetables/stops#list-scheduled-calls) for call fields and [services](/api-reference/timetables/services) for calendar exceptions.

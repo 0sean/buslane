@@ -1,0 +1,27 @@
+---
+title: "Operator fare geometry"
+description: "Draw fare-area points and approximate coverage for an operator."
+---
+
+`GET /api/fares/operators/{noc}/geometry`
+
+Returns a precomputed operator map with GeoJSON collections and coverage metadata. Requires [bearer authentication](/api-reference/overview).
+
+| Field | Contents |
+| --- | --- |
+| `areas` | GeoJSON FeatureCollection of approximate area outlines |
+| `points` | GeoJSON FeatureCollection of mapped stop locations |
+| `labels` | GeoJSON FeatureCollection of label positions |
+| `zones` | Area metadata: `id`, `name`, `membershipComplete`, `stopCount`, `mappedStopCount` |
+| `missingAreaIds` | Areas with no mapped coordinates |
+| `unmatchedStopCodes` | Published stop codes without matching coordinates |
+| `timetableGeneration` | Timetable snapshot used to build the map |
+| `approximate` | Always `true` |
+
+Coordinates use `[longitude, latitude]`. Features include `zoneId`, `name`, `color`, and `approximate` properties. Coverage outlines are approximations derived from stop membership; they do not establish ticket validity at every point inside them.
+
+The map returns as one document. It rejects `cursor` and `q`. You can pass `generation` to require a particular fares generation.
+
+Responses include catalogue generation headers and an `ETag`; send `If-None-Match` to receive `304` when unchanged. The timetable generation stored in the body can differ from the current timetable dataset.
+
+An unknown operator catalogue returns `404`. Missing or outdated precomputed fare geometry returns `503`. Building it requires timetable coordinates during import or a geometry rebuild.

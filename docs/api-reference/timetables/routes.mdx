@@ -1,0 +1,32 @@
+---
+title: "Routes"
+description: "Get a route and the trips that run on it."
+---
+
+Route records correspond to [GTFS routes.txt](https://gtfs.org/documentation/schedule/reference/#routestxt).
+See [API conventions](/api-reference/overview) for authentication and pagination.
+
+## Get a route
+
+`GET /api/timetables/routes/{id}`
+
+Returns a route with a `trips` array of [basic trip records](/api-reference/timetables/trips). The `id` is a public integer ID obtained from an [agency's routes](/api-reference/timetables/agencies#list-agency-routes).
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `id` | integer | Public route ID |
+| `agency_id` | string | Public agency ID |
+| `short_name`, `long_name` | string or null | Public line code and descriptive route name |
+| `route_type` | string or integer | Transport mode label, or an unmapped numeric code |
+| `created_at` | string | Record creation timestamp |
+| `trips` | array | Basic trips, without nested stops or services |
+
+## List a route's trips
+
+`GET /api/timetables/routes/{routeId}/trips`
+
+Returns an array of trips, each including `service`, `frequencies`, and ordered `stop_times`. Each stop time includes its `stop`. Supports `limit` and `cursor` for trips.
+
+These records correspond to [GTFS trips.txt](https://gtfs.org/documentation/schedule/reference/#tripstxt), [calendar.txt](https://gtfs.org/documentation/schedule/reference/#calendartxt), [frequencies.txt](https://gtfs.org/documentation/schedule/reference/#frequenciestxt), and [stop_times.txt](https://gtfs.org/documentation/schedule/reference/#stop_timestxt).
+
+Use [service detail](/api-reference/timetables/services) to retrieve calendar exceptions before deciding whether a trip runs on a date.

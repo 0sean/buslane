@@ -1,0 +1,16 @@
+---
+title: "Linked fares"
+description: "Find fare product candidates using timetable records."
+---
+
+| Endpoint | Matching codes |
+| --- | --- |
+| `GET /api/timetables/agencies/{agencyId}/fares` | Agency NOC; accepts a public agency ID or `noc:{code}` |
+| `GET /api/timetables/routes/{routeId}/fares` | Agency NOC and route `short_name`; uses a public integer route ID |
+| `GET /api/timetables/stops/{stopId}/fares` | Stop public ID with any `atco:` or `naptan:` prefix removed |
+
+Each endpoint returns an array of [fare product records](/api-reference/fares/records). These come from NeTEx fare documents. Matching selects candidate documents; it does not establish that every returned product applies to the requested route or stop.
+
+Supports the fare collection filters and pagination described in [fare records](/api-reference/fares/records#collection-filters). Matching filters derived from the timetable record cannot be overridden with query parameters.
+
+Responses include both `X-Timetable-Generation` and `X-Fares-Generation`. Missing records return `404`; missing matching codes return `422`; an unconfigured fares database returns `503`.

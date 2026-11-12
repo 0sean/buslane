@@ -1,0 +1,67 @@
+---
+title: "Fare records"
+description: "Read source documents, products, prices, and projected NeTEx entities."
+---
+
+Fares require a configured, imported `FARES_DB_PATH`. All endpoints require [bearer authentication](/api-reference/overview).
+
+## Documents
+
+| Endpoint | Response |
+| --- | --- |
+| `GET /api/fares/documents` | Array of document metadata |
+| `GET /api/fares/documents/{id}` | Document metadata with `links` |
+| `GET /api/fares/documents/{id}/xml` | Complete original XML, with `Content-Type: application/xml` |
+
+Document IDs are positive integers. Metadata contains `id`, `path`, `sha256`, `publication_timestamp`, `currency`, `created_at`, and `updated_at`. Each link contains `kind`, `code`, `ref`, `qualifier`, and `name`, describing operator, line, stop, or zone associations.
+
+## Products, prices, and entities
+
+| Endpoint | Response |
+| --- | --- |
+| `GET /api/fares/products` | Array of product entities |
+| `GET /api/fares/products/{id}` | One product entity |
+| `GET /api/fares/prices` | Array of price entities |
+| `GET /api/fares/prices/{id}` | One price entity |
+| `GET /api/fares/entities` | Array of projected NeTEx entities |
+| `GET /api/fares/entities/{id}` | One entity of any category |
+
+Entity IDs are positive integers. Product and price detail routes return `404` if the ID belongs to another category.
+
+| Fields | Meaning |
+| --- | --- |
+| `id`, `document_id` | Numeric entity and source document IDs |
+| `category`, `kind` | Projection category and NeTEx element type |
+| `ref`, `version`, `occurrence` | Source identity; references are scoped to a document |
+| `name` | Published name, when present |
+| `amount`, `currency` | Decimal amount string and currency; either can be null |
+| `product_ref`, `profile_ref`, `package_ref`, `matrix_ref`, `price_ref`, `group_ref` | Source references, when present |
+| `start_ref`, `end_ref` | Directional matrix endpoints, when present |
+| `data` | Parsed source tree with namespace, element name, attributes, children, and text |
+
+Prices can include `referenced_prices` when an amount is supplied through `price_ref`, and `matrices` when `matrix_ref` is present. These arrays preserve all matching definitions, including multiple versions.
+
+## Collection filters
+
+Collections return arrays, default to 100 records, and accept `limit` from 1 to 1000 plus `cursor`. Continue using `X-Next-Cursor`; keep all filters and the page size unchanged. A dataset change returns `409`.
+
+| Parameter | Meaning |
+| --- | --- |
+| `document_id` | Positive integer source document ID |
+| `noc` | Exact operator NOC |
+| `line` | Exact public line code; combine with `noc` to identify the operator's line |
+| `stop` | Exact source NaPTAN/ATCO stop code |
+| `ref` | Exact entity source reference; unavailable on document lists |
+| `product_ref` | Exact product reference; unavailable on document lists |
+| `category` | On `/entities`: `product`, `price`, `price_group`, `matrix`, `zone`, `offer`, `profile`, `table`, or `rule` |
+
+NOC, line, and stop filters select document membership. Use `document_id` when resolving references to avoid mixing identically named references from different documents.
+
+```bash
+curl -H "Authorization: Bearer $AUTH_KEY" \
+  --get 'http://localhost:3000/api/fares/prices' \
+  --data-urlencode 'document_id=1' \
+  --data-urlencode 'product_ref=product:adult'
+```
+
+Amounts remain decimal strings; the API performs no currency conversion. Products and prices are candidates: check validity, passenger eligibility, direction, zones, sales channels, and other source conditions before quoting a fare. Retrieve original XML for conditions beyond the projections.

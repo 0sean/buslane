@@ -1,0 +1,61 @@
+---
+title: "API overview"
+description: "Authentication, pagination, and response conventions."
+---
+
+Use the URL of your Buslane instance as the base URL. The examples use `http://localhost:3000`.
+All `/api` routes require the `AUTH_KEY` configured on your server:
+
+```bash
+curl -H "Authorization: Bearer $AUTH_KEY" \
+  'http://localhost:3000/api/timetables/agencies?limit=10'
+```
+
+Responses use JSON unless you request original fare XML. Collections return arrays; detail routes return objects. There is no success envelope around data.
+URL-encode IDs and query values when building requests.
+
+## Pagination
+
+| API | Default | `limit` range |
+| --- | --- | --- |
+| Timetable collections | All records | 1–1000 |
+| Fare document, product, price, and entity collections | 100 | 1–1000 |
+| Operator catalogue collections | 50 | 1–100 |
+
+Read `X-Next-Cursor` from the response headers and pass it as `cursor` to fetch the next page. Stop when the header is absent. Keep the endpoint, filters, and page size the same between requests. Treat cursors as opaque strings.
+
+```bash
+curl -H "Authorization: Bearer $AUTH_KEY" \
+  --get 'http://localhost:3000/api/timetables/agencies' \
+  --data-urlencode 'limit=10' \
+  --data-urlencode "cursor=$NEXT_CURSOR"
+```
+
+For timetables, supplying a cursor without a limit uses a limit of 100. Pagination applies to the outer collection only: nested trip arrays are returned in full. Timetable detail and geometry routes reject pagination.
+
+## Dataset versions and caching
+
+`X-Timetable-Generation` and `X-Fares-Generation` identify the dataset snapshots used by a response. Timetable-linked fares return both; the two databases update independently.
+
+Restart pagination after a dataset change. A stale timetable cursor returns `400`; a stale fares cursor returns `409`.
+
+Most responses use `Cache-Control: private, no-store`. Timetable geometry and operator catalogue responses supply an `ETag` with `private, no-cache`. Send that value as `If-None-Match` to receive `304` when unchanged.
+
+## Errors
+
+Errors generally contain an `error` message and `success: false`.
+
+| Status | Meaning |
+| --- | --- |
+| `400` | Missing or invalid bearer token, invalid parameter, or invalid cursor |
+| `404` | Record or endpoint not found |
+| `409` | Fares dataset changed; restart pagination or catalogue navigation |
+| `410` | Catalogue item was removed or repartitioned; consult catalogue changes |
+| `422` | Timetable record lacks a code needed for fare matching |
+| `500` | Query failed |
+| `503` | Database or geometry is unavailable, fares are not configured, or the query queue is full |
+| `504` | Query timed out |
+
+<Note>
+  Authentication failures return `400`, rather than `401`.
+</Note>

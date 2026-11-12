@@ -1,0 +1,50 @@
+---
+title: "Stops and stop times"
+description: "Find stops and their scheduled calls."
+---
+
+See [API conventions](/api-reference/overview) for authentication and pagination.
+
+## List stops
+
+`GET /api/timetables/stops`
+
+Returns an array of stops. Supports `limit` and `cursor`.
+
+Stop records correspond to [GTFS stops.txt](https://gtfs.org/documentation/schedule/reference/#stopstxt).
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `id` | string | Public stop ID, including its prefix |
+| `code`, `platform_code` | string or null | Public stop and platform codes |
+| `name` | string | Stop name |
+| `lat`, `lon` | string | Latitude and longitude |
+| `wheelchair_boarding` | boolean | Imported accessibility flag |
+| `location_type` | string or integer | `stop`, `station`, `entrance_exit`, `generic_node`, `boarding_area`, or an unmapped numeric code |
+| `parent_station_id` | string or null | Parent's public stop ID |
+| `created_at` | string | Record creation timestamp |
+
+## List scheduled calls
+
+`GET /api/timetables/stops/{stopId}/stop_times`
+
+Returns an array of stop times with nested `trip.service` and `trip.route.agency`. Use the stop's public string `id`. Supports `limit` and `cursor`.
+
+These are scheduled calls across the dataset, ordered by stop-time ID. The endpoint does not filter by date or return live departures. Use the trip's [service calendar](/api-reference/timetables/services) to determine when it runs.
+
+Stop times correspond to [GTFS stop_times.txt](https://gtfs.org/documentation/schedule/reference/#stop_timestxt).
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `id` | integer | Stop-time record ID |
+| `trip_id`, `stop_id` | string | Public trip and stop IDs |
+| `arrival_time`, `departure_time` | string | `HH:MM:SS`; empty string when missing |
+| `stop_sequence` | integer | Call order within the trip |
+| `stop_headsign` | string or null | Destination override for this call |
+| `pickup_type` | string or integer | `regularly_scheduled`, `no_pickup`, `must_phone`, `must_coordinate`, or an unmapped code |
+| `drop_off_type` | string or integer | `regularly_scheduled`, `no_drop_off`, `must_phone`, `must_coordinate`, or an unmapped code |
+| `shape_dist_traveled` | string or null | Distance along the shape |
+| `timepoint` | string or integer | `approximate`, `exact`, or an unmapped code |
+| `created_at` | string | Record creation timestamp |
+
+Times follow the service day in the agency's timezone and can exceed `24:00:00`. For example, `25:10:00` means 01:10 on the following calendar day.

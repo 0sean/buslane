@@ -1,0 +1,25 @@
+---
+title: "Health and cache"
+description: "Check timetable readiness and clear response caches."
+---
+
+## Check health
+
+`GET /up`
+
+Requires no authentication. Returns `200` with `{"success": true}` and `X-Timetable-Generation` when the timetable database is ready. Otherwise, returns `503` with an error.
+
+This check covers timetable readiness; it does not check the optional fares database or geometry availability.
+
+## Clear response caches
+
+`POST /api/invalidate`
+
+Requires [bearer authentication](/api-reference/overview). Clears cached query responses in the timetable pool and the fares pool, when configured. No request body is needed.
+
+```bash
+curl -X POST -H "Authorization: Bearer $AUTH_KEY" \
+  'http://localhost:3000/api/invalidate'
+```
+
+Returns `{"deleted": 0}`, where `deleted` is the total number of cache entries removed. This operation does not reimport data or rebuild geometry.

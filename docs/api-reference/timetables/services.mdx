@@ -1,0 +1,22 @@
+---
+title: "Services"
+description: "Check regular operating days and calendar exceptions."
+---
+
+`GET /api/timetables/services/{id}`
+
+Returns one service calendar with a `calendar_dates` array. Use the public integer `service_id` from a trip.
+
+Services correspond to [GTFS calendar.txt](https://gtfs.org/documentation/schedule/reference/#calendartxt); exceptions correspond to [GTFS calendar_dates.txt](https://gtfs.org/documentation/schedule/reference/#calendar_datestxt).
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `id` | integer | Public service ID |
+| `monday` … `sunday` | boolean or null | Regular operating days |
+| `start_date`, `end_date` | string or null | Inclusive date range, formatted `YYYY-MM-DD` |
+| `created_at` | string | Record creation timestamp |
+| `calendar_dates` | array | Date-specific additions and removals, ordered by date |
+
+Each exception contains `id`, `service_id`, `date` (`YYYY-MM-DD`), `exception_type`, and `created_at`. An `exception_type` of `1` adds service; `2` removes service.
+
+To check a date, apply its exception first. Otherwise, check the weekday flag and date range. The service embedded in trip responses omits `calendar_dates`, so fetch this endpoint when you need exceptions.

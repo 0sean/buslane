@@ -9,9 +9,35 @@
   },
   "favicon": "/favicon.svg",
   "navigation": {
-    "pages": [
-      "index",
-      "quickstart"
+    "groups": [
+      {
+        "group": "Get started",
+        "pages": ["index", "quickstart", "api-reference/overview"]
+      },
+      {
+        "group": "Timetables",
+        "pages": [
+          "api-reference/timetables/agencies",
+          "api-reference/timetables/routes",
+          "api-reference/timetables/trips",
+          "api-reference/timetables/services",
+          "api-reference/timetables/stops",
+          "api-reference/timetables/geometry",
+          "api-reference/timetables/fares"
+        ]
+      },
+      {
+        "group": "Fares",
+        "pages": [
+          "api-reference/fares/records",
+          "api-reference/fares/catalogue",
+          "api-reference/fares/geometry"
+        ]
+      },
+      {
+        "group": "Operations",
+        "pages": ["api-reference/operations"]
+      }
     ]
   },
   "navbar": {
