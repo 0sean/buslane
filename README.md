@@ -7,7 +7,7 @@ Buslane ingests timetable and fare data from the [Bus Open Data Service](https:/
     
 BODS doesn’t provide a proper API for timetables or fares - instead, it provides individual XML files for every service/fare, which is near impossible to use easily in a modern web app. For timetables, there is a bulk GTFS export instead of having to use XML, but it still requires downloading and processing.
 </details>
-<br/>    
+
 [API Docs](https://docs.transit.fyi/buslane)
 
 ## How it works
@@ -18,7 +18,7 @@ It’s designed to run without crazy resources - in production, it runs on a Ras
 
 ## Get started
 
-Once you’ve cloned the repo:
+Once you’ve cloned the repo (and assuming you have Docker installed):
 
 - **Make a copy of the `.env.example` file, and set it up**<br/>
 Mainly, you’ll need to set an auth token for accessing the API, and directories to store data in.<br/>
