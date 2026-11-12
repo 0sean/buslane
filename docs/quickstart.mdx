@@ -1,47 +1,43 @@
 ---
-title: "Quickstart"
-description: "Begin with a guide on the fastest path to a successful outcome"
+title: "Get started"
+description: "Host your own Buslane instance"
 ---
 
-Describe how someone begins using your product. What is the first thing they need to do? Are there any prerequisites?
-
-A quickstart should take someone from zero to using your product. They'll get a quick win and a sense of what they can accomplish.
-
-## Prerequisites
-
-Before you begin, you must have:
-
-- Requirement one (for example, Node.js 18+, a free account, an API key)
-- Requirement two (for example, a compatible device, a compatible browser, a compatible operating system)
-
-## Get started
+Once you've cloned [the repo](https://github.com/0sean/buslane) (and assuming you have Docker installed):
 
 <Steps>
-  <Step title="Install">
-    Describe how to install your product or sign up.
+  <Step title="Make a copy of the `.env.example` file, and set it up">
+    Mainly, you’ll need to set an auth token for accessing the API, and directories to store data in.<br /><br />You should ensure the UID/GID you have set owns the data directories (use `chown` if not).
 
-    ```bash
-    npm install your-package
+    ```shellscript
+    cp .env.example .env
     ```
   </Step>
-  <Step title="Configure">
-    Describe any setup or configuration needed before first use.
-
-    ```bash
-    your-cli init
+  <Step title="Build the Docker images">
+    ```shellscript
+    docker compose build
     ```
   </Step>
-  <Step title="Run it">
-    Show the first thing a user does to see it working.
-
-    ```bash
-    your-cli start
+  <Step title="Run an initial import">
+    ```shellscript
+    # Timetables import
+    docker compose --profile jobs run --rm --no-deps importer
+    # Fares import
+    docker compose --profile jobs run --rm --no-deps fares-importer
+    ```
+  </Step>
+  <Step title="Start the API server">
+    ```shellscript
+    docker compose up -d --no-build api
+    ```
+  </Step>
+  <Step title="Install the import service (runs daily imports)">
+    ```shellscript
+    sudo install -m 644 deploy/systemd/buslane-import.service deploy/systemd/buslane-import.timer /etc/systemd/system/
+    sudo systemctl daemon-reload
+    sudo systemctl enable --now buslane-import.timer
+    systemctl list-timers buslane-import.timer
+    journalctl -u buslane-import.service
     ```
   </Step>
 </Steps>
-
-<Tip>
-  Give people a way to get help. This could be a link to a support page, a chat with a customer support agent, or a forum for your product.
-
-  Example: Need help? Reach out to us at [support@yourcompany.com](mailto:support@yourcompany.com).
-</Tip>
