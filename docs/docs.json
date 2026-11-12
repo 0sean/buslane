@@ -37,7 +37,7 @@
       "github": "https://github.com/0sean"
     }
   },
-  "description": "Easily access Bus Open Data Service data",
+  "description": "Easily access Bus Open Data Service data as an API",
   "icons": {
     "library": "tabler"
   }
